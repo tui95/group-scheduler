@@ -30,6 +30,10 @@ export const store = new Vuex.Store({
                 .then(firebaseUser => {
                     commit('setUser', {email: firebaseUser.email})
                     commit('setLoading', false)
+                    //
+                    // const uid =firebaseUser.uid;
+                    // firebase.database().ref('users/'+uid +'/groups').push();
+                    //
                     router.push('/home')
                 })
                 .catch(error => {
@@ -58,7 +62,113 @@ export const store = new Vuex.Store({
             firebase.auth().signOut()
             commit('setUser', null)
             router.push('/')
+        },
+        userEnrollGroup({commit}, payload){
+            commit('setLoading',true)
+            const groupKey =payload.enroll_group_key;
+            const groupMembersRef = firebase.database().ref('groups/'+groupKey+'/groupMembers');
+            const uid = firebase.auth().currentUser.uid;
+            const userRef = firebase.database().ref('users/'+uid+'/groups');
+            const email = firebase.auth().currentUser.email;
+            
+            var user_groups = [];
+            var group_members =[];
+
+           
+            firebase.database().ref('groups/').once('value', function(snapshot) {
+                if (snapshot.hasChild(groupKey)) {
+                    
+                    userRef.once('value', function(snapshot) {
+                        snapshot.forEach(function(childSnapshot) {
+                            var childData = childSnapshot.val();
+                            user_groups = user_groups.concat([childData]);
+                        });
+                        }
+                    ).then(
+                        () =>{
+                            user_groups = user_groups.concat([groupKey]);
+                            if(user_groups.length===1){
+                                userRef.set([groupKey]);
+                            }
+                            else{
+                                userRef.set(user_groups);   
+                            }
+                        }
+                    )
+
+                    //groups
+                    groupMembersRef.once('value', function(snapshot) {
+                        snapshot.forEach(function(childSnapshot) {
+                            var childData = childSnapshot.val();
+                            group_members = group_members.concat([childData]);
+                        });
+                    }
+                    ).then(
+                        () =>{
+                            group_members = group_members.concat([email]);
+                            console.log(group_members);
+                            groupMembersRef.set(group_members);          
+                        }
+                    ).catch(error =>{
+                        console.log(error)
+                    });
+                }
+                else{
+                    alert("Group Code does not exist")
+                }
+              });
+        },
+        userCreateGroup({commit}, payload){
+            commit('setLoading',true)
+            const email = firebase.auth().currentUser.email;
+            const uid = firebase.auth().currentUser.uid;
+            firebase.database().ref('groups/').push()
+            .then(msg =>{
+                const groupKey = msg.key;
+
+                commit('setError',null)
+                commit('setLoading',false)
+
+                const groupRef = firebase.database().ref('groups/'+groupKey);   
+                groupRef.child('groupName').set(payload.group_name); 
+                groupRef.child('groupLeader').set(email)
+                groupRef.child('groupMembers').set([email])
+                
+               var user_groups = [];
+                firebase.database().ref('users/'+ uid +'/groups')
+                .once('value', function(snapshot) {
+                    snapshot.forEach(function(childSnapshot) {
+                      var childData = childSnapshot.val();
+                      user_groups = user_groups.concat([childData]);
+                    });
+                  }
+                ).then(
+                    () =>{
+
+                        user_groups = user_groups.concat([groupKey]);
+                        if(user_groups.length===1){
+                            firebase.database().ref('users/'+ uid +'/groups').set([groupKey]);
+                        }
+                        else{
+                            firebase.database().ref('users/'+ uid +'/groups').set(user_groups);   
+                        }
+                        
+                    }
+                )
+                .catch(error =>{
+                    console.log(error)
+                });
+                    
+            })
+            .catch(error =>{
+                console.log('error',error)
+                commit('setError',error.message);
+                commit('setLoading',false)
+            })
+        
+            
         }
+
     },
     getters: {
         isAuthenticated(state) {

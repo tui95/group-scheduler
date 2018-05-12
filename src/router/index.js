@@ -6,6 +6,8 @@ import Landing from '@/components/Landing'
 import NotFound from '@/components/NotFound'
 import Signup from '@/components/Signup'
 import Signin from '@/components/Signin'
+import EnrollGroup from '@/components/EnrollGroup'
+import CreateGroup from '@/components/CreateGroup'
 
 Vue.use(Router)
 
@@ -40,6 +42,18 @@ export default new Router({
             path: '/home',
             name: 'Home',
             component: Home,
+            beforeEnter: AuthGuard
+        },
+        {
+            path: '/enroll',
+            name: 'Enroll',
+            component: EnrollGroup,
+            beforeEnter: AuthGuard
+        },
+        {
+            path: '/create',
+            name: 'Create Group',
+            component: CreateGroup,
             beforeEnter: AuthGuard
         },
         {
