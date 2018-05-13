@@ -18,7 +18,7 @@
                                         />
                                     </v-flex>
                                     <v-flex mb-4>
-                                        <v-btn top small @click="field.editing = !field.editing">
+                                        <v-btn top small @click="() => cancelEdit(field)">
                                             Cancel
                                         </v-btn>
                                         <v-btn top small type="submit" color="orange" dark>
@@ -65,9 +65,7 @@
                         type: 'text',
                         label: 'Name',
                         editing: false,
-                    }
-                );
-                this.fields.push(
+                    },
                     {
                         value: user.email,
                         type: 'email',
@@ -75,6 +73,16 @@
                         editing: false,
                     }
                 )
+            },
+            cancelEdit(field) {
+                const user = this.$store.getters.getUser;
+                if (field.label === 'Name') {
+                    field.value = user.displayName
+                }
+                else if (field.label === 'Email') {
+                    field.value = user.email
+                }
+                field.editing = false
             }
         },
         created() {
