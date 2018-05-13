@@ -63,6 +63,9 @@ export const store = new Vuex.Store({
     getters: {
         isAuthenticated(state) {
             return state.user !== null && state.user !== undefined
+        },
+        getUser(state) {
+            return state.user
         }
     }
 })
