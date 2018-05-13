@@ -53,27 +53,32 @@
     export default {
         data() {
             return {
-                name: 'test',
-                email: 'example',
-                editMode: {
-                    editingName: false,
-                    editingEmail: false
-                },
-                fields: [
+                fields: []
+            }
+        },
+        methods: {
+            setFields() {
+                const user = this.$store.getters.getUser;
+                this.fields.push(
                     {
-                        value: 'test',
+                        value: user.displayName,
                         type: 'text',
                         label: 'Name',
-                        editing: false
-                    },
+                        editing: false,
+                    }
+                );
+                this.fields.push(
                     {
-                        value: 'example',
+                        value: user.email,
                         type: 'email',
                         label: 'Email',
-                        editing: false
+                        editing: false,
                     }
-                ]
+                )
             }
+        },
+        created() {
+            this.setFields()
         }
     };
 </script>
