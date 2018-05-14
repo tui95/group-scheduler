@@ -14,8 +14,49 @@ export const store = new Vuex.Store({
     },
     mutations: {
         setUser(state, payload) {
-            state.user = payload
+            var curUser = {
+                email : payload.email,
+                groups : []
+            }
+
+
+            const uid = firebase.auth().currentUser.uid;
+            const userRef = firebase.database().ref('users/'+uid+'/groups');
+            var user_groups = [];
+            userRef.once('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                    var childData = childSnapshot.val();
+                    
+                    console.log('child',childData)
+                    var curGroupData = {}
+                    const groupRef = firebase.database().ref('groups/'+childData);
+                    groupRef.once('value', function(snapshot){
+                        snapshot.forEach(function(child2Snapshot){
+                            var child2Key = child2Snapshot.key
+                            var child2Data = child2Snapshot.val();
+                            curGroupData[child2Key] = child2Data
+                        })
+                    })
+                    var group ={}
+                    group['groupKey'] = childData
+                    group['groupData'] = curGroupData;
+                    user_groups = user_groups.concat([group])
+                
+                });
+                }
+            ).then(
+                () =>{
+                    curUser.groups = user_groups;
+                    console.log(curUser.groups);
+                }
+            ).catch(error=> {console.log(error)})
+
+            state.user = curUser;
         },
+        setGroups(state, payload){
+
+        }
+        ,
         setError(state, payload) {
             state.error = payload
         },
@@ -45,7 +86,8 @@ export const store = new Vuex.Store({
             commit('setLoading', true)
             firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
                 .then(firebaseUser => {
-                    commit('setUser', {email: firebaseUser.email})
+                    commit('setUser', payload)
+                    commit('setGroups', null)  //no payload
                     commit('setLoading', false)
                     commit('setError', null)
                     router.push('/home')
@@ -133,7 +175,7 @@ export const store = new Vuex.Store({
                 groupRef.child('groupName').set(payload.group_name); 
                 groupRef.child('groupLeader').set(email)
                 groupRef.child('groupMembers').set([email])
-                
+                groupRef.child('groupDescription').set(payload.group_description)
                var user_groups = [];
                 firebase.database().ref('users/'+ uid +'/groups')
                 .once('value', function(snapshot) {
@@ -173,6 +215,14 @@ export const store = new Vuex.Store({
     getters: {
         isAuthenticated(state) {
             return state.user !== null && state.user !== undefined
+        },
+        getAllGroups : state=>{
+            console.log('groups',state.groups)
+            return state.groups;
+        },
+        getUserGroups : state=>{
+            console.log(state.user.groups)
+            return state.user.groups;
         }
     }
 })

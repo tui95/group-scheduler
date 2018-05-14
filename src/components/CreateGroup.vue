@@ -23,6 +23,11 @@
                                 required>
                             </v-text-field>
                         </v-flex>
+                        <v-text-field
+                            name="group_description"
+                            label="Group Description"
+                            multi-line
+                        ></v-text-field>
                         <v-flex class="text-xs-center" mt-5>
                             <v-btn color="primary" type="submit">Create</v-btn>
                         </v-flex>
@@ -38,12 +43,13 @@
         data() {
             return {
                 group_name: '',
+                group_description:'',
                 alert: false
             }
         },
         methods: {
             userCreateGroup() {
-                this.$store.dispatch('userCreateGroup', {group_name : this.group_name})
+                this.$store.dispatch('userCreateGroup', {group_name : this.group_name, group_description:this.group_description})
             }
         },
         computed: {
