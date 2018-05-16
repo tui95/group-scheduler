@@ -18,6 +18,11 @@
                                         />
                                     </v-flex>
                                     <v-flex mb-4>
+                                        <v-text-field
+                                            v-model="currentPassword"
+                                            type="password"
+                                            label="Current Password"
+                                        />
                                         <v-btn top small @click="cancelEdit(field)">
                                             Cancel
                                         </v-btn>
@@ -53,12 +58,17 @@
     export default {
         data() {
             return {
-                fields: []
+                fields: [],
+                currentPassword: '',
+                alert: false
             }
         },
         computed: {
             user() {
                 return this.$store.getters.getUser
+            },
+            error() {
+                return this.$store.state.error
             }
         },
         methods: {
@@ -88,8 +98,14 @@
                 field.editing = false
             },
             updateProfile(field) {
+                this.$store.dispatch("reauthenticateUser", {email: this.user.email, password: this.currentPassword})
+                this.currentPassword = ''
                 if (field.label === 'Name') {
                     this.$store.dispatch('updateDisplayName', {displayName: field.value})
+                    field.editing = false
+                }
+                else if (field.label === 'Email') {
+                    this.$store.dispatch('updateEmail', {email: field.value})
                     field.editing = false
                 }
             }
