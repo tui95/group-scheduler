@@ -128,7 +128,6 @@ export const store = new Vuex.Store({
             firebase.database().ref('groups/').push()
             .then(msg =>{
                 const groupKey = msg.key;
-
                 commit('setError',null)
                 commit('setLoading',false)
 
@@ -137,12 +136,12 @@ export const store = new Vuex.Store({
                 groupRef.child('groupLeader').set(email)
                 groupRef.child('groupMembers').set([email])
                 groupRef.child('groupDescription').set(payload.group_description)
-
-               var user_groups = [];
+               
+               let user_groups = [];
                 firebase.database().ref('users/'+ uid +'/groups')
                 .once('value', function(snapshot) {
                     snapshot.forEach(function(childSnapshot) {
-                      var childData = childSnapshot.val();
+                      let childData = childSnapshot.val();
                       user_groups = user_groups.concat([childData]);
                     });
                   }

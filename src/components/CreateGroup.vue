@@ -26,6 +26,7 @@
                         <v-text-field
                             name="group_description"
                             label="Group Description"
+                            v-model="group_description"
                             multi-line
                         ></v-text-field>
                         <v-flex class="text-xs-center" mt-5>
@@ -50,6 +51,9 @@
         methods: {
             userCreateGroup() {
                 this.$store.dispatch('userCreateGroup', {group_name : this.group_name, group_description:this.group_description})
+                this.group_name =''
+                this.group_description=''
+                alert("You successfully create the group")
             }
         },
         computed: {
