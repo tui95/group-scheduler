@@ -28,7 +28,12 @@ export const store = new Vuex.Store({
             commit('setLoading', true)
             firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
                 .then(firebaseUser => {
-                    commit('setUser', {email: firebaseUser.email})
+                    const newUser = {
+                        id: firebaseUser.user.uid,
+                        displayName: firebaseUser.user.displayName,
+                        email: firebaseUser.user.email
+                    }
+                    commit('setUser', newUser)
                     commit('setLoading', false)
                     router.push('/home')
                 })
@@ -41,7 +46,12 @@ export const store = new Vuex.Store({
             commit('setLoading', true)
             firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
                 .then(firebaseUser => {
-                    commit('setUser', {email: firebaseUser.email})
+                    const newUser = {
+                        id: firebaseUser.user.uid,
+                        displayName: firebaseUser.user.displayName,
+                        email: firebaseUser.user.email
+                    }
+                    commit('setUser', newUser)
                     commit('setLoading', false)
                     commit('setError', null)
                     router.push('/home')
@@ -52,12 +62,24 @@ export const store = new Vuex.Store({
                 })
         },
         autoSignIn({commit}, payload) {
-            commit('setUser', {email: payload.email})
+            const newUser = {
+                id: payload.uid,
+                displayName: payload.displayName,
+                email: payload.email
+            }
+            commit('setUser', newUser)
         },
         userSignOut({commit}) {
             firebase.auth().signOut()
             commit('setUser', null)
             router.push('/')
+        },
+        updateDisplayName({commit}, payload) {
+            commit('setLoading', true)
+            firebase.auth().currentUser.updateProfile({displayName: payload.displayName})
+            .then(f => {
+                commit('setLoading', false)
+            })
         }
     },
     getters: {
