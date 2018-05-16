@@ -126,10 +126,42 @@ export default {
         }
     },
     created(){
-        db.ref('groups').child(groupKey)
+        // All in one page
+        const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
+        let tempSchedule = [[],[],[],[],[]]
+        db.ref('groups/'+ groupKey).once('value',snapsot=>{
+            //check if exist
+            if(snapsot.hasChild('groupSchedule')){
+
+                db.ref('groups/'+groupKey)
+                .child('groupSchedule')
+                .once('value', scheduleSnapshot=>{
+                    console.log('scheduleSnapshot',scheduleSnapshot)
+                    scheduleSnapshot.forEach(childScheduleSnapshot=>{
+                        let childKey = childScheduleSnapshot.key
+                        let childData = childScheduleSnapshot.val()
+                        console.log(childKey)
+                        console.log(childData)
+
+                        childData.forEach(data=>{
+                            const newEvent = {
+                                dateEnd : data.dateEnd,
+                                dateStart : data.dateStart,
+                                title : data.title,
+                            }
+                            tempSchedule[childKey].push(newEvent)
+                            console.log(data)
+                        })
+                    })
+                })
+            }
+        }).then(()=> this.schedule= tempSchedule)
+        console.log(tempSchedule); 
     },
     methods :{ 
         addEvent(){
+            const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
+        
             if (!this.dateStart || !this.dateEnd){
                 alert("Start Time and Date End must not leave empty")
             }
@@ -166,8 +198,10 @@ export default {
                         dateStart: this.dateStart,
                         dateEnd: this.dateEnd,
                         title: this.title,
+                        // registeredUser : [],
                     }
                     this.schedule[index].push(newEvent)
+                    db.ref('groups/'+groupKey).child('groupSchedule').set(this.schedule)
 
                     this.dateStart = null
                     this.dateEnd = null
