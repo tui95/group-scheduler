@@ -9,6 +9,7 @@ import Signin from '@/components/Signin'
 import EnrollGroup from '@/components/EnrollGroup'
 import CreateGroup from '@/components/CreateGroup'
 import Sidebar from '@/components/Sidebar'
+import Groups from '@/components/Groups'
 Vue.use(Router)
 
 const AuthGuard = (to, from, next) => {
@@ -61,6 +62,12 @@ export default new Router({
             path: '/sidebar',
             name: 'Sidebar',
             component: Sidebar,
+            beforeEnter: AuthGuard
+        },
+        {
+            path: '/groups/:groupId',
+            name: 'Groups',
+            component: Groups,
             beforeEnter: AuthGuard
         },
         {
