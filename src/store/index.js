@@ -77,9 +77,30 @@ export const store = new Vuex.Store({
         updateDisplayName({commit}, payload) {
             commit('setLoading', true)
             firebase.auth().currentUser.updateProfile({displayName: payload.displayName})
-            .then(f => {
-                commit('setLoading', false)
-            })
+                .then(f => {
+                    commit('setLoading', false)
+                })
+        },
+        updateEmail({commit}, payload) {
+            commit('setLoading', true)
+            firebase.auth().currentUser.updateEmail(payload.email)
+                .then(f => {
+                    commit('setLoading', false)
+                })
+        },
+        reauthenticateUser({commit}, payload) {
+            commit('setLoading', true)
+            const credential = firebase.auth.EmailAuthProvider.credential(payload.email, payload.password)
+            firebase.auth().currentUser.reauthenticateAndRetrieveDataWithCredential(credential)
+                .then(f => {
+                    commit('setLoading', false)
+                    commit('setError', null)
+                })
+                .catch(error => {
+                    console.log(error)
+                    commit('setError', error.message)
+                    commit('setLoading', false)
+                })
         }
     },
     getters: {
@@ -88,6 +109,9 @@ export const store = new Vuex.Store({
         },
         getUser(state) {
             return state.user
+        },
+        getError(state) {
+            return state.error
         }
     }
 })
