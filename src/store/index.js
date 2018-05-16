@@ -181,17 +181,18 @@ export const store = new Vuex.Store({
             let groupsInfo = []
             userGroupsRef.on('value', snapshot => {
                 snapshot.forEach(childSnapshot => {
-                    let gId = childSnapshot.val()[0]
-                    let groupsRef = firebase.database().ref('groups/' + gId);
-                    groupsRef.on('value', groupSnapshot => {
-                        groupsInfo.push({
-                            groupId: gId,
-                            ...groupSnapshot.val()
+                    for (let i=0; i<childSnapshot.val().length; i++) {
+                        let gId = childSnapshot.val()[i]
+                        let groupsRef = firebase.database().ref('groups/' + gId);
+                        groupsRef.on('value', groupSnapshot => {
+                            groupsInfo.push({
+                                groupId: gId,
+                                ...groupSnapshot.val()
+                            })
                         })
-                    })
+                    }
                 })
             })
-            console.log(groupsInfo)
             commit('setUserGroupsInfo', {userGroupsInfo : groupsInfo})
         }
 
@@ -202,6 +203,9 @@ export const store = new Vuex.Store({
         },
         getUserGroupKey: state => {
             return state.userGroupKeys;
-        }
+        },
+        getUserGroupsInfo(state) {
+            return state.userGroupsInfo
+}
     }
 })
