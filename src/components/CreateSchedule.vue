@@ -91,21 +91,24 @@
         </form>
 
         {{schedule}}
-        <!-- for the sake of testing
+        for the sake of testing
         <Schedule 
 			:time-ground="['08:00', '20,00']" 
 			:week-ground="['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']" 
 			:task-detail="schedule">
 				
-		</Schedule> -->
+		</Schedule>
         
     </v-container>
 </template>
 
 <script>
 import Schedule from './schedule/Schedule'
+import { auth, db } from '@/firebase'
+
 export default {
     components : {Schedule},
+    props : ['groupKey'],
     data(){
         return{
             menu1 :false,
@@ -121,6 +124,9 @@ export default {
             selectedDay : '',
             schedule : [[],[],[],[],[]],
         }
+    },
+    created(){
+        db.ref('groups').child(groupKey)
     },
     methods :{ 
         addEvent(){
