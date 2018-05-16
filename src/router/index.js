@@ -6,6 +6,7 @@ import Landing from '@/components/Landing'
 import NotFound from '@/components/NotFound'
 import Signup from '@/components/Signup'
 import Signin from '@/components/Signin'
+import CreateSchedule from '@/components/CreateSchedule'
 
 Vue.use(Router)
 
@@ -46,7 +47,14 @@ export default new Router({
             path: '*',
             name: 'NotFound',
             component: NotFound
-        }
+        },
+        {
+            path: '/create-schedule',
+            name: 'createSchedule',
+            component: CreateSchedule,
+            beforeEnter: AuthGuard
+        },
+
     ],
     mode: 'history'
 })
