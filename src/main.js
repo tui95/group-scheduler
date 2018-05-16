@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Vuetify from 'vuetify'
+import "vue-material-design-icons/styles.css"
 import 'vuetify/dist/vuetify.min.css'
 import {store} from './store'
 import firebase from './firebase'

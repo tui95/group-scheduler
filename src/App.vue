@@ -1,6 +1,6 @@
 <template>
     <v-app>
-        <v-navigation-drawer v-model="sidebar" app>
+        <!-- <v-navigation-drawer v-model="sidebar" app>
             <v-list>
                 <v-list-tile
                     v-for="item in menuItems"
@@ -18,13 +18,13 @@
                     <v-list-tile-content>Sign Out</v-list-tile-content>
                 </v-list-tile>
             </v-list>
-        </v-navigation-drawer>
+        </v-navigation-drawer> -->
 
-        <v-toolbar app>
-      <span class="hidden-sm-and-up">
+        <v-toolbar app color="red darken-3">
+      <!-- <span class="hidden-sm-and-up">
         <v-toolbar-side-icon @click="sidebar = !sidebar">
         </v-toolbar-side-icon>
-      </span>
+      </span> -->
             <v-toolbar-title>
                 <router-link to="/" tag="span" style="cursor: pointer">
                     {{ appTitle }}
@@ -39,6 +39,10 @@
                     :to="item.path">
                     <v-icon left dark>{{ item.icon }}</v-icon>
                     {{ item.title }}
+                </v-btn>
+                <v-btn flat v-if="isAuthenticated">
+                    <v-icon left>account_circle</v-icon>
+                    Profile
                 </v-btn>
                 <v-btn flat @click="userSignOut" v-if="isAuthenticated">
                     <v-icon left>exit_to_app</v-icon>
@@ -72,7 +76,7 @@ export default {
     },
     menuItems() {
       if (this.isAuthenticated) {
-        return [{ title: "Home", path: "/home", icon: "home" }];
+        return [];
       } else {
         return [
           { title: "Sign Up", path: "/signup", icon: "face" },

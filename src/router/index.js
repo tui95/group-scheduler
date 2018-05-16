@@ -7,6 +7,7 @@ import NotFound from '@/components/NotFound'
 import Signup from '@/components/Signup'
 import Signin from '@/components/Signin'
 import EnrollGroup from '@/components/EnrollGroup'
+import ForgotPassword from '@/components/ForgotPassword'
 import CreateGroup from '@/components/CreateGroup'
 
 Vue.use(Router)
@@ -22,6 +23,11 @@ const AuthGuard = (to, from, next) => {
 // export default router
 export default new Router({
     routes: [
+        {
+            path : '/forgotpassword',
+            name : 'ForgotPassword',
+            component : ForgotPassword
+        },
         {
             path: '/',
             name: 'Landing',

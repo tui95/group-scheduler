@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from '@/firebase'
+import {googleProvider} from '@/firebase'
 import router from '@/router'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
     state: {
-        appTitle: 'My Awesome App',
+        appTitle: 'Grouppie',
         user: null,
         error: null,
         loading: false
@@ -24,10 +25,49 @@ export const store = new Vuex.Store({
         }
     },
     actions: {
+        sendResetEmail({commit},payload){
+            commit('setLoading',true)
+            firebase.auth().sendPasswordResetEmail(payload.email).then(result => {
+                commit('setLoading',false)
+                router.push('/signin')
+            }).catch(error => {
+                commit('setError', error.message)
+                commit('setLoading',false)
+            });
+        },
+        signinWithGoogle({commit},payload){
+            commit('setLoading',true)
+            firebase.auth().signInWithPopup(googleProvider).then(result => {
+                commit('setLoading',false)
+                router.push('/home')
+                // // This gives you a Google Access Token. You can use it to access the Google API.
+                // var token = result.credential.accessToken;
+                // // The signed-in user info.
+                // var user = result.user;
+                // // ...
+              }).catch(error => {
+                commit('setError', error.message)
+                commit('setLoading',false)
+                // // Handle Errors here.
+                // var errorCode = error.code;
+                // var errorMessage = error.message;
+                // // The email of the user's account used.
+                // var email = error.email;
+                // // The firebase.auth.AuthCredential type that was used.
+                // var credential = error.credential;
+                // // ...
+              });
+        },
         userSignUp({commit}, payload) {
             commit('setLoading', true)
             firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
                 .then(firebaseUser => {
+                    firebase.auth().currentUser.sendEmailVerification().then(function(){
+                        alert("please verify your email via an email sent to your email address by the system before signin")
+                    }).catch(error =>{
+                        commit('setError', error.message)
+                        commit('setLoading', false)
+                    })
                     commit('setUser', {email: firebaseUser.email})
                     commit('setLoading', false)
                     //
