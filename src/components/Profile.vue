@@ -8,7 +8,7 @@
                     </v-card-text>
                     <v-container>
                         <v-flex xs12 sm8 offset-sm2>
-                            <form @submit.prevent="" v-for="field in fields">
+                            <form v-for="field in fields">
                                 <v-layout column v-if="field.editing">
                                     <v-flex>
                                         <v-text-field
@@ -18,10 +18,10 @@
                                         />
                                     </v-flex>
                                     <v-flex mb-4>
-                                        <v-btn top small @click="() => cancelEdit(field)">
+                                        <v-btn top small @click="cancelEdit(field)">
                                             Cancel
                                         </v-btn>
-                                        <v-btn top small type="submit" color="orange" dark>
+                                        <v-btn top small @click="updateProfile(field)" color="orange" dark>
                                             Save change
                                         </v-btn>
                                     </v-flex>
@@ -56,18 +56,22 @@
                 fields: []
             }
         },
+        computed: {
+            user() {
+                return this.$store.getters.getUser
+            }
+        },
         methods: {
             setFields() {
-                const user = this.$store.getters.getUser;
                 this.fields.push(
                     {
-                        value: user.displayName,
+                        value: this.user.displayName,
                         type: 'text',
                         label: 'Name',
                         editing: false,
                     },
                     {
-                        value: user.email,
+                        value: this.user.email,
                         type: 'email',
                         label: 'Email',
                         editing: false,
@@ -75,14 +79,19 @@
                 )
             },
             cancelEdit(field) {
-                const user = this.$store.getters.getUser;
                 if (field.label === 'Name') {
-                    field.value = user.displayName
+                    field.value = this.user.displayName
                 }
                 else if (field.label === 'Email') {
-                    field.value = user.email
+                    field.value = this.user.email
                 }
                 field.editing = false
+            },
+            updateProfile(field) {
+                if (field.label === 'Name') {
+                    this.$store.dispatch('updateDisplayName', {displayName: field.value})
+                    field.editing = false
+                }
             }
         },
         created() {
