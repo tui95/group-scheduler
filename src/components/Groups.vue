@@ -4,7 +4,7 @@
             <v-flex xs12 class="text-xs-justify" mt-5>
                 <h1>Group title</h1>
                 <v-divider></v-divider>
-                
+                {{$route.params.groupId}}
             </v-flex>
         </v-layout>
         <v-layout row wrap>
