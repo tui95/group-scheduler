@@ -27,7 +27,7 @@
       </span> -->
             <v-toolbar-title>
                 <router-link to="/" tag="span" style="cursor: pointer">
-                    {{ appTitle }}
+                    <font color = "white">{{ appTitle }}</font>
                 </router-link>
             </v-toolbar-title>
             <v-spacer></v-spacer>
@@ -37,16 +37,16 @@
                     v-for="item in menuItems"
                     :key="item.title"
                     :to="item.path">
-                    <v-icon left dark>{{ item.icon }}</v-icon>
-                    {{ item.title }}
+                    <v-icon left color="white">{{ item.icon }}</v-icon>
+                    <div><font color = "white">{{ item.title }}</font></div>
                 </v-btn>
                 <v-btn flat v-if="isAuthenticated">
-                    <v-icon left>account_circle</v-icon>
-                    Profile
+                    <v-icon color="white" left>account_circle</v-icon>
+                    <font color = "white">Profile</font>
                 </v-btn>
                 <v-btn flat @click="userSignOut" v-if="isAuthenticated">
-                    <v-icon left>exit_to_app</v-icon>
-                    Sign Out
+                    <v-icon color="white" left>exit_to_app</v-icon>
+                    <font color = "white">Sign Out</font>
                 </v-btn>
             </v-toolbar-items>
         </v-toolbar>
@@ -57,6 +57,10 @@
             </v-container>
         </v-content>
 
+        <!-- <v-footer color="white--text red darken-3" class="pa-3">
+            <v-spacer></v-spacer>
+            <div>&copy;{{new Date().getFullYear()}}</div>
+        </v-footer> -->
     </v-app>
 </template>
 
