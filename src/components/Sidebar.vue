@@ -40,7 +40,7 @@
                 // userGroupKeys : null,
                 userGroups : [],
             }
-        
+
         },
         created(){
 
@@ -66,16 +66,16 @@
             this.userGroups = this.$store.state.userGroupsInfo
         },
         methods :{
-            getGroupData(groupKey){
-                let groupData = {};
-                const groupRef = firebase.database().ref('groups/'+groupKey);
-                groupRef.once('value', snapshot => {
-                    groupData = snapshot.val()
-                })
+            // getGroupData(groupKey){
+            //     let groupData = {};
+            //     const groupRef = firebase.database().ref('groups/'+groupKey);
+            //     groupRef.once('value', snapshot => {
+            //         groupData = snapshot.val()
+            //     })
 
-                return groupData;
+            //     return groupData;
 
-            },
+            // },
             goToGroup(id) {
                 this.$router.push('/groups/' + id)
             }
@@ -87,7 +87,7 @@
             loading() {
                 return this.$store.state.loading
             },
-        
+
         },
         watch: {
             error(value) {
@@ -101,6 +101,6 @@
                 }
             }
         },
-        
+
     }
 </script>
