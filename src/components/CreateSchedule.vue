@@ -83,11 +83,6 @@
                     <v-btn color="primary" type="submit">Create</v-btn>
                 </v-flex>
             </v-layout>
-            {{title}}
-            {{selectedDay}}
-            {{dateStart}}
-            {{dateEnd}}
-            {{this.schedule}}
 
         </form>
 
@@ -136,10 +131,12 @@ export default {
                         }
                         else{
                             childData.forEach(data=>{
+                                const email = auth.currentUser.email
                                 var newEvent = {
                                     dateEnd : data.dateEnd,
                                     dateStart : data.dateStart,
                                     title : data.title,
+                                    registeredUser :[email]
                                 }
                                 this.schedule[childKey].push(newEvent)
                                 // console.log(data)
@@ -235,6 +232,7 @@ export default {
                     this.dateEnd = null
                     this.title = ''
                     this.selectedDay =''
+                    alert("You successfully create the event.")
                 }
             }
 

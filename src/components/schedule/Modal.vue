@@ -13,6 +13,7 @@
 			        	<small>{{showModalDetail.week}}  {{showModalDetail.dateStart}} - {{showModalDetail.dateEnd}}</small>
 			        	<p>{{showModalDetail.detail}}</p>
 								<h4>Registered Users :</h4>
+								<!-- {{showModalDetail}} -->
 								<ul>
 									<li v-for="(email,index) in showModalDetail.registeredUser" :key="index">
 										{{email}}
@@ -120,6 +121,7 @@
 		},
 		created(){
 			this.modalShow = this.show;
+			
 		},
 		methods: {
 			close(e) {
