@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container v-if="display">
         <form @submit.prevent="addEvent">
 
             <v-layout column>
@@ -90,10 +90,10 @@
             
         </form>
 
-        {{schedule}}
+        <!-- {{schedule}} -->
         for the sake of testing
         <Schedule 
-			:time-ground="['08:00', '20,00']" 
+			:time-ground="['06:00', '22:00']" 
 			:week-ground="['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']" 
 			:task-detail="schedule">
 				
@@ -111,21 +111,47 @@ export default {
     props : ['groupKey'],
     data(){
         return{
+            display:false,
             menu1 :false,
             menu2 :false,
             alert :false,
             title :'',
             dateStart: null,
             dateEnd : null,
+            // schedule:[[],[],[],[],[]],
+            schedule: [
+				[
+					{
+						dateStart: '09:30',
+						dateEnd: '10:30',
+                        title: '开会',
+                        fnck : '12w',
+					},
+					{
+						dateStart: '11:30',
+						dateEnd: '13:50',
+						title: '开会',
+					}
+
+				],
+                [],
+                [],
+                [],
+                []
+			],
             
+        
+    
             
             days : ['Monday','Tuesday','Wednesday','Thursday','Friday'],
             
             selectedDay : '',
-            schedule : [[],[],[],[],[]],
+            
         }
     },
     created(){
+        console.log('hi')
+        console.log(this.schedule)
         // All in one page
         const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
         let tempSchedule = [[],[],[],[],[]]
@@ -140,28 +166,33 @@ export default {
                     scheduleSnapshot.forEach(childScheduleSnapshot=>{
                         let childKey = childScheduleSnapshot.key
                         let childData = childScheduleSnapshot.val()
-                        console.log(childKey)
-                        console.log(childData)
+                        // console.log(childKey)
+                        // console.log(childData)
 
                         childData.forEach(data=>{
-                            const newEvent = {
+                            var newEvent = {
                                 dateEnd : data.dateEnd,
                                 dateStart : data.dateStart,
-                                title : data.title,
+                                title : data.title,                                
                             }
-                            tempSchedule[childKey].push(newEvent)
-                            console.log(data)
+                            this.schedule[childKey].push(newEvent)
+                            // console.log(data)
                         })
                     })
                 })
+                .then(()=>{this.display=true})
+
             }
-        }).then(()=> this.schedule= tempSchedule)
-        console.log(tempSchedule); 
+
+        })
+        .then(()=>{
+            console.log('DONE')
+        })
     },
     methods :{ 
-        addEvent(){
+        addEvent({commit}){
             const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
-        
+            // const groupKey = $route.params.groupKey
             if (!this.dateStart || !this.dateEnd){
                 alert("Start Time and Date End must not leave empty")
             }
@@ -198,7 +229,7 @@ export default {
                         dateStart: this.dateStart,
                         dateEnd: this.dateEnd,
                         title: this.title,
-                        // registeredUser : [],
+                        registeredUser : [],
                     }
                     this.schedule[index].push(newEvent)
                     db.ref('groups/'+groupKey).child('groupSchedule').set(this.schedule)

@@ -163,9 +163,9 @@ export default {
 				width: '100%'
 			}
 		}
-    },
-    
+	},
 	created() {
+		console.log('hi2')
 		// console.log(this.ta)
 		this.pageTimeGround = this.initTimeGroud(this.timeGround);
 		let maxTime = this.pageTimeGround[this.pageTimeGround.length - 1];
@@ -200,6 +200,7 @@ export default {
 		    }
 		}
 		console.log(this.taskDetail);
+		console.log('shit')
 	},
 	mounted() {
 		this.taskListSty.height = (this.pageTimeGround.length - 1) * 100 + 'px';
