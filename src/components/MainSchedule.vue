@@ -124,10 +124,10 @@
         },
         computed: {
             getData(){
-                this.schedule=[]
                 let groupId = this.$route.params.groupId
             let scheduleRef = db.ref("groups/" + groupId + "/groupSchedule")
                 scheduleRef.on('value', snapshot => {
+                    this.schedule=[]
                     snapshot.forEach(daySnapshot => {
                         let day = this.days[daySnapshot.key]
                         let tmpEvents = []
