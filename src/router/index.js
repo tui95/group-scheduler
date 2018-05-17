@@ -10,7 +10,6 @@ import EnrollGroup from '@/components/EnrollGroup'
 import GroupPage from '@/components/GroupPage'
 import ForgotPassword from '@/components/ForgotPassword'
 import CreateGroup from '@/components/CreateGroup'
-import Sidebar from '@/components/Sidebar'
 import CreateSchedule from '@/components/CreateSchedule'
 import MainSchedulee from '@/components/MainSchedule'
 import Profile from '@/components/Profile'
@@ -80,11 +79,7 @@ export default new Router({
             component: CreateGroup,
             beforeEnter: AuthGuard
         },
-
         {
-            path: '/sidebar',
-            name: 'Sidebar',
-            component: Sidebar,
             path: '/profile',
             name: 'Profile',
             component: Profile,
