@@ -17,7 +17,7 @@
                                 <td class="text-xs-center">{{ props.item.dateEnd }}</td>
                                 <td class="justify-center layout px-0">
                                     <div v-if="isGroupLeader">
-                                        <v-btn icon class="mx-0" @click.stop="dialog = true">
+                                        <v-btn icon class="mx-0" @click.stop="editEvent(props.item)">
                                             <v-icon color="teal">edit</v-icon>
                                         </v-btn>
                                         <v-btn icon class="mx-0" @click="">
@@ -42,17 +42,18 @@
                         <v-card-text>
                             <v-container grid-list-md>
                                 <v-layout wrap column>
-                                    <v-flex>
-                                        <v-alert type="error" dismissible v-model="alert">
-                                            {{ error }}
-                                        </v-alert>
-                                    </v-flex>
+                                    <!--<v-flex>-->
+                                        <!--<v-alert type="error" dismissible v-model="alert">-->
+                                            <!--{{ error }}-->
+                                        <!--</v-alert>-->
+                                    <!--</v-flex>-->
                                     <v-flex>
                                         <v-text-field
                                                 name="Event Title"
                                                 label="Title"
                                                 id="eventTitle"
                                                 type="text"
+                                                v-model="title"
                                                 required>
                                         </v-text-field>
                                     </v-flex>
@@ -129,10 +130,22 @@
             return {
                 schedule: [],
                 isGroupLeader: false,
-                dialog: false
+                dialog: false,
+                title: '',
+                dateStart: null,
+                dateEnd: null,
+                menu1 :false,
+                menu2 :false,
+                alert :false,
             }
         },
-        methods: {},
+        methods: {
+            editEvent(eventData) {
+                this.dialog = true
+
+                console.log(eventData)
+            }
+        },
         computed: {
             days() {
                 return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -156,11 +169,13 @@
                     sortable: false
                 })
                 return retHeaders
+            },
+            groupId() {
+                return this.$route.params.groupId
             }
         },
         created() {
-            let groupId = this.$route.params.groupId
-            let scheduleRef = db.ref("groups/" + groupId + "/groupSchedule")
+            let scheduleRef = db.ref("groups/" + this.groupId + "/groupSchedule")
             scheduleRef.on('value', snapshot => {
                 snapshot.forEach(daySnapshot => {
                     let day = this.days[daySnapshot.key]
@@ -172,7 +187,7 @@
                     this.schedule.push({dayString: day, events: tmpEvents})
                 })
             })
-            let groupLeaderRef = db.ref("groups/" + groupId + "/groupLeader")
+            let groupLeaderRef = db.ref("groups/" + this.groupId + "/groupLeader")
             groupLeaderRef.on("value", snapshot => {
                 if (snapshot.val() === auth.currentUser.email) {
                     this.isGroupLeader = true
