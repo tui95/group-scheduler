@@ -29,10 +29,10 @@
                             </v-flex>
                             <h4>Schedule : <v-btn><v-icon left>event_note</v-icon>view all events</v-btn></h4>
                             <v-flex v-if="display">
-                                <Schedule 
-                                    :time-ground="['06:00', '22:00']" 
-                                    :week-ground="['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']" 
-                                    :task-detail="schedule"> 
+                                <Schedule
+                                    :time-ground="['06:00', '22:00']"
+                                    :week-ground="['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']"
+                                    :task-detail="schedule">
                                 </Schedule>
                             </v-flex>
                         </v-layout>

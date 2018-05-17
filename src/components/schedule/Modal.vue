@@ -7,7 +7,7 @@
 			        <div class="modal-header">
 			          <a class="close" @click="modalShow = false">X</a>
 			        </div>
-			        
+
 			        <div class="modal-body">
 			        	<h2>{{showModalDetail.title}}</h2>
 			        	<small>{{showModalDetail.week}}  {{showModalDetail.dateStart}} - {{showModalDetail.dateEnd}}</small>
@@ -15,7 +15,6 @@
 			        </div>
 			      </div>
 			    </div>
-		    
 		</div>
 	</transition>
 </template>

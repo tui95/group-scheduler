@@ -53,7 +53,7 @@
 	.time-ground ul li p{
 		position:absolute;
 		left: 0;
-		
+
 		height: 1px;
 		background-color: #EAEAEA;
 	}
@@ -138,7 +138,6 @@ export default {
 	// },
 	watch: {
 		timeGround(value) {
-			
 				// console.log('value=', value);
 				this.pageTimeGround = this.initTimeGroud(value);
 				// return value;
@@ -163,13 +162,12 @@ export default {
 			},
 			timeListSty: {
 				width: '100%'
-			}	
+			}
 		}
 	},
 	created() {
 		// console.log(this.ta)
 		this.pageTimeGround = this.initTimeGroud(this.timeGround);
-
 		let maxTime = this.pageTimeGround[this.pageTimeGround.length - 1];
 		let minTime = this.pageTimeGround[0];
 		let maxMin = maxTime.split(':')[0] * 60 + maxTime.split(':')[1] * 1;
@@ -206,7 +204,6 @@ export default {
 	mounted() {
 		this.taskListSty.height = (this.pageTimeGround.length - 1) * 100 + 'px';
 		this.timeListSty.width = this.weekGround.length * 20 + '%';
-		
 		// console.log(this.taskDetail);
 		// console.log(this.weekGround);
 	},
