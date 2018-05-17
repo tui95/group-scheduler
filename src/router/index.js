@@ -7,6 +7,7 @@ import NotFound from '@/components/NotFound'
 import Signup from '@/components/Signup'
 import Signin from '@/components/Signin'
 import Profile from '@/components/Profile'
+import ChangePassword from '@/components/ChangePassword'
 
 Vue.use(Router)
 
@@ -21,6 +22,12 @@ const AuthGuard = (to, from, next) => {
 // export default router
 export default new Router({
     routes: [
+        {
+            path : '/changepassword',
+            name : 'ChangePassword',
+            component : ChangePassword,
+            beforeEnter : AuthGuard
+        },
         {
             path: '/',
             name: 'Landing',

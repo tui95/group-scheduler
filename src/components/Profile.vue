@@ -49,7 +49,7 @@
                     <v-container>
                         <v-layout>
                             <v-flex xs12 sm8 offset-sm2>
-                                <v-btn right small color="red" dark>Change password</v-btn>
+                                <v-btn @click="() => $router.push('/changepassword')" right small color="red" dark>Change password</v-btn>
                             </v-flex>
                         </v-layout>
                     </v-container>
