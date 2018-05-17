@@ -1,5 +1,5 @@
 <template>
-    <v-container v-if="display">
+    <v-container>
         <form @submit.prevent="addEvent">
 
             <v-layout column>
@@ -99,39 +99,15 @@ import { auth, db } from '@/firebase'
 
 export default {
     components : {Schedule},
-    props : ['groupKey'],
     data(){
         return{
-            display:false,
             menu1 :false,
             menu2 :false,
             alert :false,
             title :'',
             dateStart: null,
             dateEnd : null,
-            // schedule:[[],[],[],[],[]],
-            schedule: [
-				[
-					{
-						dateStart: '09:30',
-						dateEnd: '10:30',
-                        title: '开会',
-                        fnck : '12w',
-					},
-					{
-						dateStart: '11:30',
-						dateEnd: '13:50',
-						title: '开会',
-					}
-
-				],
-                [],
-                [],
-                [],
-                []
-			],
-
-
+            schedule:[[],[],[],[],[]],  
 
 
             days : ['Monday','Tuesday','Wednesday','Thursday','Friday'],
@@ -144,13 +120,13 @@ export default {
         console.log('hi')
         console.log(this.schedule)
         // All in one page
-        const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
+        const groupId ="-LCdBX6_LyyhbHn8m793" //tempory
         let tempSchedule = [[],[],[],[],[]]
-        db.ref('groups/'+ groupKey).once('value',snapsot=>{
+        db.ref('groups/'+ groupId).once('value',snapsot=>{
             //check if exist
             if(snapsot.hasChild('groupSchedule')){
 
-                db.ref('groups/'+groupKey)
+                db.ref('groups/'+groupId)
                 .child('groupSchedule')
                 .once('value', scheduleSnapshot=>{
                     console.log('scheduleSnapshot',scheduleSnapshot)
@@ -171,7 +147,12 @@ export default {
                         })
                     })
                 })
-                .then(()=>{this.display=true})
+                .then(()=>{
+
+                })
+
+            }
+            else{
 
             }
 
@@ -182,8 +163,9 @@ export default {
     },
     methods :{
         addEvent({commit}){
-            const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
-            // const groupKey = $route.params.groupKey
+            // const groupId ="-LCdBX6_LyyhbHn8m793" //tempory
+            
+            let groupId = this.$route.params.groupId
             if (!this.dateStart || !this.dateEnd){
                 alert("Start Time and Date End must not leave empty")
             }
@@ -216,14 +198,16 @@ export default {
                     else if (this.selectedDay === 'Friday'){
                         index=4
                     }
+                    const email = auth.currentUser.email
                     const newEvent = {
                         dateStart: this.dateStart,
                         dateEnd: this.dateEnd,
                         title: this.title,
-                        registeredUser : [],
+                        registeredUser : [email],
                     }
                     this.schedule[index].push(newEvent)
-                    db.ref('groups/'+groupKey).child('groupSchedule').set(this.schedule)
+                    console.log(this.schedule);
+                    db.ref('groups/'+groupId).child('groupSchedule').set(this.schedule)
 
                     this.dateStart = null
                     this.dateEnd = null

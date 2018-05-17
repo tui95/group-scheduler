@@ -1,7 +1,11 @@
 <template>
     <v-container>
         <v-flex>
+
+            <h1>Events<v-btn fab><v-icon>add</v-icon></v-btn></v-brn></h1> 
+                
             <v-layout xs12 sm8 offset-sm2>
+                
                 <v-expansion-panel>
                     <v-expansion-panel-content v-for="(day,i) in schedule" :key="i">
                         <div slot="header">{{day.dayString}}</div>
@@ -15,6 +19,7 @@
                                 <td class="text-xs-center">{{ props.item.title }}</td>
                                 <td class="text-xs-center">{{ props.item.dateStart}}</td>
                                 <td class="text-xs-center">{{ props.item.dateEnd }}</td>
+
                                 <td class="justify-center layout px-0">
                                     <div v-if="isGroupLeader">
                                         <v-btn icon class="mx-0" @click="">
@@ -24,9 +29,13 @@
                                             <v-icon color="pink">delete</v-icon>
                                         </v-btn>
                                     </div>
-                                    <v-btn v-else icon class="mx-0" @click="">
+                                    <v-btn v-if="isJoinEvent(props.item.registeredUser)" disabled icon class="mx-0" >
                                         <v-icon color="blue">group_add</v-icon>
-                                    </v-btn>
+                                    </v-btn>    
+
+                                    <v-btn v-else icon class="mx-0" @click="joinEvent(day.dayString,props.index)">
+                                        <v-icon color="blue">group_add</v-icon>
+                                    </v-btn>    
                                 </td>
                             </template>
                         </v-data-table>
@@ -47,8 +56,34 @@
                 isGroupLeader: false
             }
         },
-        methods: {},
+        methods: {
+
+            isJoinEvent(registeredUser){
+                if(registeredUser){
+                    console.log(registeredUser)
+                    const user = auth.currentUser.email
+                    if(registeredUser.indexOf(user)> -1)return true
+                    
+                }
+                return false
+            },
+
+
+            joinEvent(dayString, eventIndex){
+
+            const user = auth.currentUser.email
+            const dayIndex=  this.days.indexOf(dayString);
+            let groupId = this.$route.params.groupId
+            console.log('fuck',this.schedule)
+            console.log(dayIndex)
+            let newRegisteredUser = this.schedule[1]
+            console.log('newRegister',newRegisteredUser); 
+            // db.ref('groups/'+groupId+'/groupSchedule/'+dayIndex+'/'+eventIndex).child('registeredUser').set(user);
+        },
+        },
         computed: {
+            
+            
             days() {
                 return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
             },
@@ -61,7 +96,9 @@
                     retHeaders.push({
                         text: headerText[i],
                         value: headerValue[i],
-                        align: headerAlign
+                        align: headerAlign,
+                        sortable :false
+                        
                     })
                 }
                 retHeaders.push({
@@ -81,10 +118,10 @@
                     let day = this.days[daySnapshot.key]
                     let tmpEvents = []
                     daySnapshot.forEach(eventSnapshot => {
-                        console.log(eventSnapshot.val())
-                        tmpEvents.push(eventSnapshot.val())
+                        let event = eventSnapshot.val()
+                        tmpEvents.push(event)
                     })
-                    this.schedule.push({dayString: day, events: tmpEvents})
+                    this.schedule.push({dayString: day ,events: tmpEvents})
                 })
             })
             let groupLeaderRef = db.ref("groups/" + groupId + "/groupLeader")

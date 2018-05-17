@@ -59,6 +59,12 @@ export default new Router({
             path: '/groups/:groupId/events',
             name: 'MainSchedule',
             component: MainSchedulee
+        },
+
+        {
+            path: '/groups/:groupId/create',
+            name: 'CreateSchedule',
+            component: CreateSchedule
         }
     ],
     mode: 'history'
