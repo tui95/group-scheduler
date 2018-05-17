@@ -37,16 +37,74 @@
                 <v-dialog v-model="dialog" persistent max-width="500px">
                     <v-card>
                         <v-card-title>
-                            <span class="headline">User Profile</span>
+                            <span class="headline">Edit event</span>
                         </v-card-title>
                         <v-card-text>
                             <v-container grid-list-md>
-                                <v-layout wrap>
-                                    <v-flex xs12 sm6 md4>
-                                        <v-text-field label="Legal first name" required></v-text-field>
+                                <v-layout wrap column>
+                                    <v-flex>
+                                        <v-alert type="error" dismissible v-model="alert">
+                                            {{ error }}
+                                        </v-alert>
                                     </v-flex>
-                                    <v-flex xs12 sm6 md4>
-                                        <v-text-field label="Legal middle name" hint="example of helper text only on focus"></v-text-field>
+                                    <v-flex>
+                                        <v-text-field
+                                                name="Event Title"
+                                                label="Title"
+                                                id="eventTitle"
+                                                type="text"
+                                                required>
+                                        </v-text-field>
+                                    </v-flex>
+                                    <v-flex>
+                                        <v-menu
+                                                ref="menuS"
+                                                :close-on-content-click="false"
+                                                v-model="menu1"
+                                                :nudge-right="40"
+                                                :return-value.sync="dateStart"
+                                                lazy
+                                                transition="scale-transition"
+                                                offset-y
+                                                full-width
+                                                max-width="290px"
+                                                min-width="290px"
+                                        >
+                                            <v-text-field
+                                                    slot="activator"
+                                                    v-model="dateStart"
+                                                    label="Start Time"
+                                                    prepend-icon="access_time"
+                                                    readonly
+                                            ></v-text-field>
+                                            <v-time-picker v-model="dateStart" @change="$refs.menuS.save(dateStart)"></v-time-picker>
+                                        </v-menu>
+
+                                    </v-flex>
+                                    <v-flex>
+                                        <v-menu
+                                                ref="menuE"
+                                                :close-on-content-click="false"
+                                                v-model="menu2"
+                                                :nudge-right="40"
+                                                :return-value.sync="dateEnd"
+                                                lazy
+                                                transition="scale-transition"
+                                                offset-y
+                                                full-width
+                                                max-width="290px"
+                                                min-width="290px"
+                                        >
+                                            <v-text-field
+                                                    slot="activator"
+                                                    v-model="dateEnd"
+                                                    label="End Time"
+                                                    prepend-icon="access_time"
+                                                    readonly
+                                            ></v-text-field>
+                                            <v-time-picker v-model="dateEnd" @change="$refs.menuE.save(dateEnd)"></v-time-picker>
+                                        </v-menu>
+
                                     </v-flex>
                                 </v-layout>
                             </v-container>
