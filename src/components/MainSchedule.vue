@@ -17,16 +17,52 @@
                                 <td class="text-xs-center">{{ props.item.dateEnd }}</td>
                                 <td class="justify-center layout px-0">
                                     <div v-if="isGroupLeader">
-                                        <v-btn icon class="mx-0" @click="">
-                                            <v-icon color="teal">edit</v-icon>
-                                        </v-btn>
-                                        <v-btn icon class="mx-0" @click="">
+                                        <v-btn icon class="mx-0" @click.stop="dialog2 = true">
                                             <v-icon color="pink">delete</v-icon>
                                         </v-btn>
                                     </div>
-                                    <v-btn v-else icon class="mx-0" @click="">
+                                    
+
+                                    <v-btn v-if="isJoinEvent(props.item.registeredUser)" disabled icon class="mx-0" >
+                                        <v-icon color="blue">group_add</v-icon>
+                                    </v-btn>    
+
+                                    <v-btn v-else icon class="mx-0" @click.stop="dialog3 = true">
                                         <v-icon color="blue">group_add</v-icon>
                                     </v-btn>
+
+                                    <v-dialog v-model="dialog3" max-width="500px">
+                                        <v-card>
+                                            <v-card-title>
+                                                <span>Do you want to register for this event?</span>
+                                                <v-spacer></v-spacer>
+                                                
+                                            </v-card-title>
+                                            <v-card-actions>
+                                                <v-btn color="primary" flat @click.stop="dialog3=false">Close</v-btn>
+                                                <v-btn color="primary" flat @click.stop="dialog3=false"
+                                                @click="joinEvent(day.dayString,props.index)">Register</v-btn>
+                                            
+                                            </v-card-actions>
+                                        </v-card>
+                                    </v-dialog>
+
+                                    <v-dialog v-model="dialog2" max-width="500px">
+                                        <v-card>
+                                            <v-card-title>
+                                                <span>Do you want to remove this event?</span>
+                                                <v-spacer></v-spacer>
+                                                
+                                            </v-card-title>
+                                            <v-card-actions>
+                                                <v-btn color="primary" flat @click.stop="dialog2=false">Close</v-btn>
+                                                <v-btn color="primary" flat @click.stop="dialog2=false"
+                                                @click="deleteEvent(day.dayString,props.index)">Delete</v-btn>
+                                            
+                                            </v-card-actions>
+                                        </v-card>
+                                    </v-dialog>
+
                                 </td>
                             </template>
                         </v-data-table>
@@ -34,7 +70,7 @@
                 </v-expansion-panel>
             </v-layout>
         </v-flex>
-    </v-container>
+        </v-container>
 </template>
 
 <script>
@@ -44,11 +80,68 @@
         data() {
             return {
                 schedule: [],
-                isGroupLeader: false
+                isGroupLeader: false,
+                dialog3: false,
+                dialog2: false,
             }
         },
-        methods: {},
+        methods: {
+            isJoinEvent(registeredUser){
+                if(registeredUser){
+                    const user = auth.currentUser.email
+                    if(registeredUser.indexOf(user)> -1)return true
+                    
+                }
+                return false
+            },
+            joinEvent(dayString, eventIndex){
+                const user = auth.currentUser.email
+                const dayIndex=  this.days.indexOf(dayString);
+                let groupId = this.$route.params.groupId
+                 this.schedule[dayIndex].events[eventIndex].registeredUser.push(user);
+                let newRegisteredUser = this.schedule[dayIndex].events[eventIndex].registeredUser;
+                db.ref('groups/'+groupId+'/groupSchedule/'+dayIndex+'/'+eventIndex).child('registeredUser').set(newRegisteredUser);
+            },
+            deleteEvent(dayString,eventIndex){
+
+                const user = auth.currentUser.email
+                const dayIndex=  this.days.indexOf(dayString);
+                let groupId = this.$route.params.groupId
+                this.schedule[dayIndex].events.splice(eventIndex,1);
+                // let newRegisteredUser = this.schedule[dayIndex].events[eventIndex].registeredUser;
+                console.log(this.schedule[dayIndex].events)
+                if(this.schedule[dayIndex].events.length===0){
+                    db.ref('groups/'+groupId+'/groupSchedule/'+dayIndex+'/').set("empty");
+                }
+                else{
+                    db.ref('groups/'+groupId+'/groupSchedule/'+dayIndex+'/').set(this.schedule[dayIndex].events);
+                }
+            
+            }
+        },
         computed: {
+            getData(){
+                let groupId = this.$route.params.groupId
+            let scheduleRef = db.ref("groups/" + groupId + "/groupSchedule")
+                scheduleRef.on('value', snapshot => {
+                    this.schedule=[]
+                    snapshot.forEach(daySnapshot => {
+                        let day = this.days[daySnapshot.key]
+                        let tmpEvents = []
+                        daySnapshot.forEach(eventSnapshot => {
+                            console.log(eventSnapshot.val())
+                            tmpEvents.push(eventSnapshot.val())
+                        })
+                        this.schedule.push({dayString: day, events: tmpEvents})
+                    })
+                })
+                let groupLeaderRef = db.ref("groups/" + groupId + "/groupLeader")
+                groupLeaderRef.on("value", snapshot => {
+                    if (snapshot.val() === auth.currentUser.email) {
+                        this.isGroupLeader = true
+                    }
+                })
+            },
             days() {
                 return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
             },
@@ -74,25 +167,8 @@
             }
         },
         created() {
-            let groupId = this.$route.params.groupId
-            let scheduleRef = db.ref("groups/" + groupId + "/groupSchedule")
-            scheduleRef.on('value', snapshot => {
-                snapshot.forEach(daySnapshot => {
-                    let day = this.days[daySnapshot.key]
-                    let tmpEvents = []
-                    daySnapshot.forEach(eventSnapshot => {
-                        console.log(eventSnapshot.val())
-                        tmpEvents.push(eventSnapshot.val())
-                    })
-                    this.schedule.push({dayString: day, events: tmpEvents})
-                })
-            })
-            let groupLeaderRef = db.ref("groups/" + groupId + "/groupLeader")
-            groupLeaderRef.on("value", snapshot => {
-                if (snapshot.val() === auth.currentUser.email) {
-                    this.isGroupLeader = true
-                }
-            })
+            this.getData
+            
         }
     }
 </script>

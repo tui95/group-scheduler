@@ -1,5 +1,5 @@
 <template>
-    <v-container v-if="display">
+    <v-container >
         <form @submit.prevent="addEvent">
 
             <v-layout column>
@@ -87,6 +87,7 @@
             {{selectedDay}}
             {{dateStart}}
             {{dateEnd}}
+            {{this.schedule}}
 
         </form>
 
@@ -99,7 +100,6 @@ import { auth, db } from '@/firebase'
 
 export default {
     components : {Schedule},
-    props : ['groupKey'],
     data(){
         return{
             display:false,
@@ -109,33 +109,8 @@ export default {
             title :'',
             dateStart: null,
             dateEnd : null,
-            // schedule:[[],[],[],[],[]],
-            schedule: [
-				[
-					{
-						dateStart: '09:30',
-						dateEnd: '10:30',
-                        title: '开会',
-                        fnck : '12w',
-					},
-					{
-						dateStart: '11:30',
-						dateEnd: '13:50',
-						title: '开会',
-					}
-
-				],
-                [],
-                [],
-                [],
-                []
-			],
-
-
-
-
-            days : ['Monday','Tuesday','Wednesday','Thursday','Friday'],
-
+            schedule:[[],[],[],[],[]],
+    
             selectedDay : '',
 
         }
@@ -144,86 +119,117 @@ export default {
         console.log('hi')
         console.log(this.schedule)
         // All in one page
-        const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
-        let tempSchedule = [[],[],[],[],[]]
-        db.ref('groups/'+ groupKey).once('value',snapsot=>{
+        const groupId = this.$route.params.groupId
+
+        db.ref('groups/'+ groupId).once('value',snapsot=>{
             //check if exist
             if(snapsot.hasChild('groupSchedule')){
 
-                db.ref('groups/'+groupKey)
+                db.ref('groups/'+groupId)
                 .child('groupSchedule')
                 .once('value', scheduleSnapshot=>{
-                    console.log('scheduleSnapshot',scheduleSnapshot)
                     scheduleSnapshot.forEach(childScheduleSnapshot=>{
                         let childKey = childScheduleSnapshot.key
                         let childData = childScheduleSnapshot.val()
-                        // console.log(childKey)
-                        // console.log(childData)
-
-                        childData.forEach(data=>{
-                            var newEvent = {
-                                dateEnd : data.dateEnd,
-                                dateStart : data.dateStart,
-                                title : data.title,
-                            }
-                            this.schedule[childKey].push(newEvent)
-                            // console.log(data)
-                        })
+                        if(childData==='empty'){
+                            this.schedule[childKey] = childData;
+                        }
+                        else{
+                            childData.forEach(data=>{
+                                var newEvent = {
+                                    dateEnd : data.dateEnd,
+                                    dateStart : data.dateStart,
+                                    title : data.title,
+                                }
+                                this.schedule[childKey].push(newEvent)
+                                // console.log(data)
+                            })
+                        }
                     })
                 })
-                .then(()=>{this.display=true})
 
             }
 
         })
         .then(()=>{
             console.log('DONE')
+            console.log(this.schedule); 
         })
     },
     methods :{
+        isOverlap(){
+            var i=0;
+            var dayIndex = this.days.indexOf(this.selectedDay);
+            let dayEvents = this.schedule[dayIndex]
+            console.log(dayEvents)
+            if(dayEvents ==='empty')return false
+            else{
+                var existDateStart, existDateEnd
+                for(i;i<dayEvents.length;i++){
+                    existDateStart = dayEvents[i].dateStart
+                    existDateEnd  = dayEvents[i].dateEnd
+                    if((existDateStart <= this.dateStart && this.dateStart <=existDateEnd) ||
+                       (existDateStart <= this.dateEnd && this.dateEnd <=existDateEnd) ||
+                       (existDateStart <= this.dateStart && this.dateStart <=existDateEnd) ||
+                    ((this.dateStart <= existDateStart) && (this.dateEnd>= existDateEnd))
+                    ){
+                        return true
+                    }
+
+                }
+            }
+            return false
+        },
         addEvent({commit}){
-            const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
-            // const groupKey = $route.params.groupKey
+
+            const groupId = this.$route.params.groupId
+            // const groupId = $route.params.groupId
             if (!this.dateStart || !this.dateEnd){
                 alert("Start Time and Date End must not leave empty")
+            
             }
             else{
                 const dateStartInt = parseInt(this.dateStart.replace(/:/g,''));
                 const dateEndInt = parseInt(this.dateEnd.replace(/:/g,''));
                 console.log(dateStartInt, dateEndInt)
-                if (dateStartInt <800 ||
-                    dateEndInt < 800 ||
-                    dateStartInt >2000||
-                    dateEndInt >2000||
-                    dateStartInt>dateEndInt){
+                if (dateStartInt>dateEndInt){
                     console.log('End time must be after Start Time')
                     alert('End time must not come before Start Time')
                 }
+                if (dateStartInt <800 ||
+                    dateEndInt < 800 ||
+                    dateStartInt >2000||
+                    dateEndInt >2000)
+                    {
+                        console.log('The start and end time must be between 8:00 and 20:00')
+
+                        alert('The start and end time must be between 8:00 and 20:00')
+                
+                }
+                if(this.isOverlap()){
+                    console.log("The time period is overlapped with other events")
+                    alert("The time period is overlapped with other events")
+                    
+                }
                 else{
-                    var index =0
-                    if (this.selectedDay ==='Monday'){
-                        index=0
-                    }
-                    else if (this.selectedDay ==='Tuesday'){
-                        index=1
-                    }
-                    else if (this.selectedDay ==='Wednesday'){
-                        index=2
-                    }
-                    else if (this.selectedDay ==='Thursday'){
-                        index=3
-                    }
-                    else if (this.selectedDay === 'Friday'){
-                        index=4
-                    }
+                    var index = this.days.indexOf(this.selectedDay)
+
+                    const email = auth.currentUser.email
                     const newEvent = {
                         dateStart: this.dateStart,
                         dateEnd: this.dateEnd,
                         title: this.title,
-                        registeredUser : [],
+                        registeredUser : [email],
                     }
-                    this.schedule[index].push(newEvent)
-                    db.ref('groups/'+groupKey).child('groupSchedule').set(this.schedule)
+                    if(this.schedule[index].indexOf("empty")>-1){
+                        
+                        this.schedule[index]=[newEvent]
+                    }
+                    else{   
+                        this.schedule[index].push(newEvent)
+                    }
+                    // console.log(this.schedule)
+                    db.ref('groups/'+groupId).child('groupSchedule').set(this.schedule)
 
                     this.dateStart = null
                     this.dateEnd = null
@@ -241,6 +247,9 @@ export default {
             },
             loading() {
                 return this.$store.state.loading
+            },
+            days(){
+                return ['Monday','Tuesday','Wednesday','Thursday','Friday']
             }
         },
         watch: {

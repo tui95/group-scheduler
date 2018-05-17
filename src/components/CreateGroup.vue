@@ -47,6 +47,10 @@
                                 </v-flex>
                             </v-layout>
                         </form>
+
+                        <div v-if="display">
+                            Your Group Code : {{groupCode}}
+                        </div>
                     </v-card-text>
                 </v-card>
             </v-flex>
@@ -60,18 +64,24 @@
             return {
                 group_name: '',
                 group_description: '',
-                alert: false
+                alert: false,
+                display : false,
             }
         },
         methods: {
             userCreateGroup() {
                 this.$store.dispatch('userCreateGroup', {group_name : this.group_name, group_description : this.group_description})
+                
                 this.group_name = ''
                 this.group_description = ''
+                this.display=true
                 alert("Group succesfully created")
             }
         },
         computed: {
+            groupCode(){
+                return this.$store.state.currentGroupKey
+            },
             error() {
                 return this.$store.state.error
             },

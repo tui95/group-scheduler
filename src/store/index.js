@@ -13,6 +13,7 @@ export const store = new Vuex.Store({
         error: null,
         userGroupKeys: null,
         loading: false,
+        currentGroupKey : '',
         userGroupsInfo: []
     },
     mutations: {
@@ -28,6 +29,9 @@ export const store = new Vuex.Store({
         },
         setUserGroupsInfo(state, payload) {
             state.userGroupsInfo = payload.userGroupsInfo
+        },
+        setCurrentGroupKey(state, payload){
+            state.currentGroupKey = payload
         }
     },
     actions: {
@@ -121,7 +125,6 @@ export const store = new Vuex.Store({
             var user_groups = [];
             var group_members = [];
 
-
             firebase.database().ref('groups/').once('value', function (snapshot) {
                 if (snapshot.hasChild(groupKey)) {
 
@@ -134,12 +137,9 @@ export const store = new Vuex.Store({
                     ).then(
                         () => {
                             user_groups = user_groups.concat([groupKey]);
-                            if (user_groups.length === 1) {
-                                userRef.set([groupKey]);
-                            }
-                            else {
-                                userRef.set(user_groups);
-                            }
+                            
+                            userRef.set(user_groups);
+                            
                         }
                     )
 
@@ -159,6 +159,8 @@ export const store = new Vuex.Store({
                     ).catch(error => {
                         console.log(error)
                     });
+
+                    alert("You successfully joined the group")
                 }
                 else {
                     alert("Group Code does not exist")
@@ -175,12 +177,21 @@ export const store = new Vuex.Store({
 
                     commit('setError', null)
                     commit('setLoading', false)
+                    commit('setCurrentGroupKey',groupKey)
 
                     const groupRef = firebase.database().ref('groups/' + groupKey);
                     groupRef.child('groupName').set(payload.group_name);
                     groupRef.child('groupLeader').set(email)
                     groupRef.child('groupMembers').set([email])
                     groupRef.child('groupDescription').set(payload.group_description)
+
+                    groupRef.child('groupSchedule').child('0').set('empty')
+                    groupRef.child('groupSchedule').child('1').set('empty')
+                    groupRef.child('groupSchedule').child('2').set('empty')
+                    groupRef.child('groupSchedule').child('3').set('empty')
+                    groupRef.child('groupSchedule').child('4').set('empty')
+                    
+                    
 
                     var user_groups = [];
                     firebase.database().ref('users/' + uid + '/groups')
@@ -191,21 +202,23 @@ export const store = new Vuex.Store({
                                 });
                             }
                         ).then(
-                        () => {
+                            () => {
 
-                            user_groups = user_groups.concat([groupKey]);
-                            if (user_groups.length === 1) {
-                                firebase.database().ref('users/' + uid + '/groups').set([groupKey]);
-                            }
-                            else {
-                                firebase.database().ref('users/' + uid + '/groups').set(user_groups);
-                            }
+                                user_groups = user_groups.concat([groupKey]);
+                                if (user_groups.length === 1) {
+                                    firebase.database().ref('users/' + uid + '/groups').set([groupKey]);
+                                }
+                                else {
+                                    firebase.database().ref('users/' + uid + '/groups').set(user_groups);
+                                }
 
-                        }
-                    )
+                            }
+                        )
                         .catch(error => {
                             console.log(error)
                         });
+                    alert("Your Group Code: "+ groupKey)
+                    
 
                 })
                 .catch(error => {
@@ -213,6 +226,7 @@ export const store = new Vuex.Store({
                     commit('setError', error.message);
                     commit('setLoading', false)
                 })
+
 
 
         },
