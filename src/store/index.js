@@ -76,20 +76,8 @@ export const store = new Vuex.Store({
         },
         updateDisplayName({commit}, payload) {
             commit('setLoading', true)
-            // const credential = firebase.auth.EmailAuthProvider.credential(payload.email, payload.password)
-            // firebase.auth().currentUser.reauthenticateAndRetrieveDataWithCredential(credential)
-            //     .then(f => {
-                    firebase.auth().currentUser.updateProfile({displayName: payload.displayName})
-                        .then(f => {
-                            commit('setLoading', false)
-                            commit('setError', null)
-                        })
-                        .catch(error => {
-                            commit('setError', error.message)
-                        })
-                // })
-                .catch(error => {
-                    commit('setError', error.message)
+            firebase.auth().currentUser.updateProfile({displayName: payload.displayName})
+                .then(() => {
                     commit('setLoading', false)
                 })
         },
