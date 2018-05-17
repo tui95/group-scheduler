@@ -11,7 +11,6 @@ import GroupPage from '@/components/GroupPage'
 import ForgotPassword from '@/components/ForgotPassword'
 import CreateGroup from '@/components/CreateGroup'
 import Sidebar from '@/components/Sidebar'
-import Groups from '@/components/Groups'
 import CreateSchedule from '@/components/CreateSchedule'
 import MainSchedulee from '@/components/MainSchedule'
 
@@ -78,12 +77,6 @@ export default new Router({
             path: '/sidebar',
             name: 'Sidebar',
             component: Sidebar,
-            beforeEnter: AuthGuard
-        },
-        {
-            path: '/groups/:groupId',
-            name: 'Groups',
-            component: Groups,
             beforeEnter: AuthGuard
         },
         {

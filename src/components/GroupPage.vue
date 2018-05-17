@@ -28,7 +28,7 @@
                                 </ul>
                             </v-flex>
                             <h4>Schedule : <v-btn><v-icon left>event_note</v-icon>view all events</v-btn></h4>
-                            <v-flex v-if="display">
+                            <v-flex>
                                 <Schedule
                                     :time-ground="['06:00', '22:00']"
                                     :week-ground="['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']"
@@ -55,7 +55,6 @@
                 group_description : '',
                 group_members : [],
                 alert : false,
-                display : false,
                 title : '',
                 dateEnd : null,
                 dateStart : null,
@@ -93,7 +92,6 @@
                             })
                         })
                     })
-                    .then(() => {this.display = true})
                 }
             })
             .then(() => {
