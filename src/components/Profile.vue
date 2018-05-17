@@ -11,6 +11,11 @@
                             <form v-for="field in fields">
                                 <v-layout column v-if="field.editing">
                                     <v-flex>
+                                        <v-alert type="error" dismissible v-model="alert">
+                                            {{ error }}
+                                        </v-alert>
+                                    </v-flex>
+                                    <v-flex>
                                         <v-text-field
                                             v-model="field.value"
                                             :type="field.type"
@@ -18,11 +23,11 @@
                                         />
                                     </v-flex>
                                     <v-flex mb-4>
-                                        <v-text-field
-                                            v-model="currentPassword"
-                                            type="password"
-                                            label="Current Password"
-                                        />
+                                        <!--<v-text-field-->
+                                            <!--v-model="currentPassword"-->
+                                            <!--type="password"-->
+                                            <!--label="Current Password"-->
+                                        <!--/>-->
                                         <v-btn top small @click="cancelEdit(field)">
                                             Cancel
                                         </v-btn>
@@ -34,7 +39,7 @@
                                 <v-layout row v-else>
                                     <p class="subheading"> {{field.label}}: {{ field.value }} </p>
                                     <v-spacer></v-spacer>
-                                    <v-btn icon bottom @click="field.editing = !field.editing">
+                                    <v-btn v-if="isNotEmail(field)" icon bottom @click="field.editing = true">
                                         <v-icon class="small-icon">edit</v-icon>
                                     </v-btn>
                                 </v-layout>
@@ -98,20 +103,39 @@
                 field.editing = false
             },
             updateProfile(field) {
-                this.$store.dispatch("reauthenticateUser", {email: this.user.email, password: this.currentPassword})
-                this.currentPassword = ''
+                // this.$store.dispatch("reauthenticateUser", {email: this.user.email, password: this.currentPassword})
+                // this.currentPassword = ''
                 if (field.label === 'Name') {
-                    this.$store.dispatch('updateDisplayName', {displayName: field.value})
+                    this.$store.dispatch('updateDisplayName', {
+                        displayName: field.value,
+                        // password: this.currentPassword,
+                        // email: this.user.email
+                    })
                     field.editing = false
                 }
-                else if (field.label === 'Email') {
-                    this.$store.dispatch('updateEmail', {email: field.value})
-                    field.editing = false
-                }
+                // else if (field.label === 'Email') {
+                //     this.$store.dispatch('updateEmail', {email: field.value})
+                //     field.editing = false
+                // }
+            },
+            isNotEmail(field) {
+                return field.label !== 'Email'
             }
         },
         created() {
             this.setFields()
+        },
+        watch: {
+            error(value) {
+                if (value) {
+                    this.alert = true
+                }
+            },
+            alert(value) {
+                if (!value) {
+                    this.$store.commit('setError', null)
+                }
+            }
         }
     };
 </script>
