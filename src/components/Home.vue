@@ -1,11 +1,10 @@
 <template>
     <v-container fluid fill-height>
-        <v-layout column>
-            <v-flex fluid fill-height>
+        <v-layout row wrap fluid>
+            <v-flex xs3>
                 <Sidebar />
             </v-flex>
-            <v-flex>
-                <v-layout row wrap>
+            <v-flex xs8>
                 <v-flex xs12 class="text-xs-center" mt-5>
                     <h1>Home page</h1>
                 </v-flex>
@@ -29,9 +28,7 @@
                         </v-card-actions>
                     </v-card>
                 </v-flex>
-            </v-layout>
-            </v-flex>
-            
+            </v-flex>            
         </v-layout>
     </v-container>
 </template>
