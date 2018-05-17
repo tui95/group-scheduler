@@ -91,6 +91,11 @@ export default {
             this.$store.dispatch("reauthenticateUser",{email : firebase.auth().currentUser.email, password: this.old_password})
             this.old_password = ''
             this.$store.dispatch("changePassword",{new_password : this.new_password})
+            // .then(result =>{
+               
+            // }).catch(error =>{
+            //     console.log('ERROR')
+            // })
         }
     },
     watch: {
