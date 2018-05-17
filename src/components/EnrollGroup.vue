@@ -52,6 +52,7 @@
         methods: {
             userEnrollGroup() {
                 this.$store.dispatch('userEnrollGroup', {enroll_group_key : this.enroll_group_key})
+                this.enroll_group_key = ''
             }
         },
         computed: {
