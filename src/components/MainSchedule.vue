@@ -1,7 +1,14 @@
 <template>
     <v-container>
         <v-flex>
+            <div>
+                    <h2>Events 
+                        <v-btn v-if="isGroupLeader" fab left @click="gotoCreate">
+                             <v-icon color="pink">add</v-icon>
+                        </v-btn></h2>
+                </div>
             <v-layout xs12 sm8 offset-sm2>
+                <v-divider></v-divider>
                 <v-expansion-panel>
                     <v-expansion-panel-content v-for="(day,i) in schedule" :key="i">
                         <div slot="header">{{day.dayString}}</div>
@@ -29,6 +36,14 @@
 
                                     <v-btn v-else icon class="mx-0" @click.stop="dialog3 = true">
                                         <v-icon color="blue">group_add</v-icon>
+                                    </v-btn>
+
+                                    <v-btn v-if="!isJoinEvent(props.item.registeredUser) || isGroupLeader" disabled icon class="mx-0" >
+                                        <v-icon color="blue">directions_run</v-icon>
+                                    </v-btn>    
+
+                                    <v-btn v-else icon class="mx-0" @click.stop="dialog1 = true">
+                                        <v-icon color="blue">directions_run  </v-icon>
                                     </v-btn>
 
                                     <v-dialog v-model="dialog3" max-width="500px">
@@ -63,6 +78,22 @@
                                         </v-card>
                                     </v-dialog>
 
+                                    <v-dialog v-model="dialog1" max-width="500px">
+                                        <v-card>
+                                            <v-card-title>
+                                                <span>Do you want to resign from this event?</span>
+                                                <v-spacer></v-spacer>
+                                                
+                                            </v-card-title>
+                                            <v-card-actions>
+                                                <v-btn color="primary" flat @click.stop="dialog1=false">Close</v-btn>
+                                                <v-btn color="primary" flat @click.stop="dialog1=false"
+                                                @click="resignEvent(day.dayString,props.index)">Delete</v-btn>
+                                            
+                                            </v-card-actions>
+                                        </v-card>
+                                    </v-dialog>
+
                                 </td>
                             </template>
                         </v-data-table>
@@ -83,9 +114,15 @@
                 isGroupLeader: false,
                 dialog3: false,
                 dialog2: false,
+                dialog1: false,
             }
         },
         methods: {
+            gotoCreate(){
+                return this.$router.push(this.$route.path +'/create')
+                
+            }
+            ,
             isJoinEvent(registeredUser){
                 if(registeredUser){
                     const user = auth.currentUser.email
@@ -116,7 +153,16 @@
                 else{
                     db.ref('groups/'+groupId+'/groupSchedule/'+dayIndex+'/').set(this.schedule[dayIndex].events);
                 }
-            
+            },
+            resignEvent(dayString, eventIndex){
+                const user = auth.currentUser.email
+                const dayIndex=  this.days.indexOf(dayString);
+                let groupId = this.$route.params.groupId
+                const userIndex = this.schedule[dayIndex].events[eventIndex].registeredUser.indexOf(user)
+                this.schedule[dayIndex].events[eventIndex].registeredUser.splice(userIndex,1);;
+                
+                db.ref('groups/'+groupId+'/groupSchedule/'+dayIndex+'/'+eventIndex+'/registeredUser')
+                .set(this.schedule[dayIndex].events[eventIndex].registeredUser);
             }
         },
         computed: {

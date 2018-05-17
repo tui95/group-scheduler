@@ -10,7 +10,7 @@ import GroupPage from '@/components/GroupPage'
 import ForgotPassword from '@/components/ForgotPassword'
 import CreateGroup from '@/components/CreateGroup'
 import CreateSchedule from '@/components/CreateSchedule'
-import MainSchedulee from '@/components/MainSchedule'
+import MainSchedule from '@/components/MainSchedule'
 import Profile from '@/components/Profile'
 import ChangePassword from '@/components/ChangePassword'
 
@@ -84,7 +84,7 @@ export default new Router({
             component: NotFound
         },
         {
-            path: '/groups/:groupId/create',
+            path: '/groups/:groupId/events/create',
             name: 'createSchedule',
             component: CreateSchedule,
             beforeEnter: AuthGuard
@@ -92,7 +92,7 @@ export default new Router({
         {
             path: '/groups/:groupId/events',
             name: 'MainSchedule',
-            component: MainSchedulee
+            component: MainSchedule
         }
     ],
     mode: 'history'

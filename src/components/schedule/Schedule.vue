@@ -131,11 +131,11 @@ export default {
 	components: {
 		Modal: Modal
 	},
-	// watch: {
-	// 	timeGround: function(value){
-	// 		this.timeGround = value
-	// 	}
-	// },
+	watch: {
+		timeGround: function(value){
+			this.timeGround = value
+		}
+	},
 	watch: {
 		timeGround(value) {
 				// console.log('value=', value);

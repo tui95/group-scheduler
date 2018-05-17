@@ -83,7 +83,7 @@ export const store = new Vuex.Store({
                     // const uid =firebaseUser.uid;
                     // firebase.database().ref('users/'+uid +'/groups').push();
                     //
-                    router.push('/home')
+                    router.push('/')
                 })
                 .catch(error => {
                     commit('setError', error.message)
@@ -242,6 +242,7 @@ export const store = new Vuex.Store({
             let userGroupsRef = firebase.database().ref('users/' + firebase.auth().currentUser.uid).orderByKey()
             let groupsInfo = []
             userGroupsRef.on('value', snapshot => {
+                // commit('setUserGroupsInfo', {userGroupsInfo : []})
                 snapshot.forEach(childSnapshot => {
                     for (let i=0; i<childSnapshot.val().length; i++) {
                         let gId = childSnapshot.val()[i]
