@@ -11,6 +11,9 @@ import ForgotPassword from '@/components/ForgotPassword'
 import CreateGroup from '@/components/CreateGroup'
 import Sidebar from '@/components/Sidebar'
 import Groups from '@/components/Groups'
+import CreateSchedule from '@/components/CreateSchedule'
+import MainSchedulee from '@/components/MainSchedule'
+
 Vue.use(Router)
 
 const AuthGuard = (to, from, next) => {
@@ -80,6 +83,17 @@ export default new Router({
             path: '*',
             name: 'NotFound',
             component: NotFound
+        },
+        {
+            path: '/create-schedule',
+            name: 'createSchedule',
+            component: CreateSchedule,
+            beforeEnter: AuthGuard
+        },
+        {
+            path: '/groups/:groupId/events',
+            name: 'MainSchedule',
+            component: MainSchedulee
         }
     ],
     mode: 'history'
