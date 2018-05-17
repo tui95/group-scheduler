@@ -12,6 +12,12 @@
 			        	<h2>{{showModalDetail.title}}</h2>
 			        	<small>{{showModalDetail.week}}  {{showModalDetail.dateStart}} - {{showModalDetail.dateEnd}}</small>
 			        	<p>{{showModalDetail.detail}}</p>
+								<h4>Registered Users :</h4>
+								<ul>
+									<li v-for="(email,index) in showModalDetail.registeredUser" :key="index">
+										{{email}}
+									</li>
+								</ul>
 			        </div>
 			      </div>
 			    </div>
