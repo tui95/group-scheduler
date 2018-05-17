@@ -1,12 +1,13 @@
 <template>
-    <v-container>
-        <v-layout>
+    <v-container fluid fill-height>
+        <v-layout align-center justify-center>
             <v-flex xs12 sm8 offset-sm2>
-                <v-card height="200%">
+                <v-card class="elevation-12" height="200%">
+                    <v-card-title class="text-xs-left">
+                        <h3 class="my-3 headline"><v-icon large class="mb-1">account_circle</v-icon><>Profile</h3>
+                    </v-card-title>
+                    <v-divider></v-divider>
                     <v-card-text>
-                        <div class="text-xs-center mt-4 headline">Profile</div>
-                    </v-card-text>
-                    <v-container>
                         <v-flex xs12 sm8 offset-sm2>
                             <form v-for="field in fields">
                                 <v-layout column v-if="field.editing">
@@ -45,14 +46,19 @@
                                 </v-layout>
                             </form>
                         </v-flex>
-                    </v-container>
-                    <v-container>
-                        <v-layout>
-                            <v-flex xs12 sm8 offset-sm2>
-                                <v-btn @click="() => $router.push('/changepassword')" right small color="red" dark>Change password</v-btn>
+                        <v-divider></v-divider>
+                        <v-flex>
+                            <v-layout>
+                            <v-flex mt-3 xs12 sm8 offset-sm4>
+                                <v-btn style="float : right" @click="() => $router.push('/changepassword')" right color="red" dark>Change password</v-btn>
+                                <v-btn class="mr-3" style="float : right" color="secondary" @click="() => $router.push('/')" :disabled="loading">Back</v-btn>
                             </v-flex>
                         </v-layout>
-                    </v-container>
+                        </v-flex>
+                    </v-card-text>
+                    <!-- <v-container>
+                        
+                    </v-container> -->
                 </v-card>
             </v-flex>
         </v-layout>
