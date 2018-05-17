@@ -1,10 +1,10 @@
 <template>
-    <v-navigation-drawer permanent>
-    <v-toolbar flat>
+    <v-navigation-drawer permanent class="red lighten-4">
+    <v-toolbar color = "red accent-4" flat>
       <v-list>
         <v-list-tile>
           <v-list-tile-title class="title">
-            Your Groups
+            <font color = "white">Your Groups</font>
           </v-list-tile-title>
         </v-list-tile>
       </v-list>
