@@ -182,6 +182,14 @@ export const store = new Vuex.Store({
                     groupRef.child('groupMembers').set([email])
                     groupRef.child('groupDescription').set(payload.group_description)
 
+                    groupRef.child('groupSchedule').child('0').set('empty')
+                    groupRef.child('groupSchedule').child('1').set('empty')
+                    groupRef.child('groupSchedule').child('2').set('empty')
+                    groupRef.child('groupSchedule').child('3').set('empty')
+                    groupRef.child('groupSchedule').child('4').set('empty')
+                    
+                    
+
                     var user_groups = [];
                     firebase.database().ref('users/' + uid + '/groups')
                         .once('value', function (snapshot) {

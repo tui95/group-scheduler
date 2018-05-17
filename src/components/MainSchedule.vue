@@ -24,9 +24,15 @@
                                             <v-icon color="pink">delete</v-icon>
                                         </v-btn>
                                     </div>
-                                    <v-btn v-else icon class="mx-0" @click="">
+                                    
+
+                                    <v-btn v-if="isJoinEvent(props.item.registeredUser)" disabled icon class="mx-0" >
                                         <v-icon color="blue">group_add</v-icon>
-                                    </v-btn>
+                                    </v-btn>    
+
+                                    <v-btn v-else icon class="mx-0" @click="joinEvent(day.dayString,props.index)">
+                                        <v-icon color="blue">group_add</v-icon>
+                                    </v-btn>    
                                 </td>
                             </template>
                         </v-data-table>
@@ -47,7 +53,24 @@
                 isGroupLeader: false
             }
         },
-        methods: {},
+        methods: {
+            isJoinEvent(registeredUser){
+                if(registeredUser){
+                    const user = auth.currentUser.email
+                    if(registeredUser.indexOf(user)> -1)return true
+                    
+                }
+                return false
+            },
+            joinEvent(dayString, eventIndex){
+                const user = auth.currentUser.email
+                const dayIndex=  this.days.indexOf(dayString);
+                let groupId = this.$route.params.groupId
+                this.schedule[dayIndex].events[eventIndex].registeredUser.push(user);
+                let newRegisteredUser = this.schedule[dayIndex].events[eventIndex].registeredUser;
+                db.ref('groups/'+groupId+'/groupSchedule/'+dayIndex+'/'+eventIndex).child('registeredUser').set(newRegisteredUser);
+            },
+        },
         computed: {
             days() {
                 return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
@@ -74,6 +97,7 @@
             }
         },
         created() {
+            this.schedule=[]
             let groupId = this.$route.params.groupId
             let scheduleRef = db.ref("groups/" + groupId + "/groupSchedule")
             scheduleRef.on('value', snapshot => {

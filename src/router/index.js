@@ -85,7 +85,7 @@ export default new Router({
             component: NotFound
         },
         {
-            path: '/create-schedule',
+            path: '/groups/:groupId/create',
             name: 'createSchedule',
             component: CreateSchedule,
             beforeEnter: AuthGuard

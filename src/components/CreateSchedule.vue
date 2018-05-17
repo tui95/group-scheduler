@@ -1,5 +1,5 @@
 <template>
-    <v-container v-if="display">
+    <v-container >
         <form @submit.prevent="addEvent">
 
             <v-layout column>
@@ -99,7 +99,6 @@ import { auth, db } from '@/firebase'
 
 export default {
     components : {Schedule},
-    props : ['groupKey'],
     data(){
         return{
             display:false,
@@ -109,27 +108,8 @@ export default {
             title :'',
             dateStart: null,
             dateEnd : null,
-            // schedule:[[],[],[],[],[]],
-            schedule: [
-				[
-					{
-						dateStart: '09:30',
-						dateEnd: '10:30',
-                        title: '开会',
-                        fnck : '12w',
-					},
-					{
-						dateStart: '11:30',
-						dateEnd: '13:50',
-						title: '开会',
-					}
-
-				],
-                [],
-                [],
-                [],
-                []
-			],
+            schedule:[[],[],[],[],[]],
+            
 
 
 
@@ -144,46 +124,49 @@ export default {
         console.log('hi')
         console.log(this.schedule)
         // All in one page
-        const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
+        const groupId = this.$route.params.groupId
         let tempSchedule = [[],[],[],[],[]]
-        db.ref('groups/'+ groupKey).once('value',snapsot=>{
+        db.ref('groups/'+ groupId).once('value',snapsot=>{
             //check if exist
             if(snapsot.hasChild('groupSchedule')){
 
-                db.ref('groups/'+groupKey)
+                db.ref('groups/'+groupId)
                 .child('groupSchedule')
                 .once('value', scheduleSnapshot=>{
                     console.log('scheduleSnapshot',scheduleSnapshot)
                     scheduleSnapshot.forEach(childScheduleSnapshot=>{
                         let childKey = childScheduleSnapshot.key
                         let childData = childScheduleSnapshot.val()
-                        // console.log(childKey)
-                        // console.log(childData)
-
-                        childData.forEach(data=>{
-                            var newEvent = {
-                                dateEnd : data.dateEnd,
-                                dateStart : data.dateStart,
-                                title : data.title,
-                            }
-                            this.schedule[childKey].push(newEvent)
-                            // console.log(data)
-                        })
+                        if(childData==='empty'){
+                            this.schedule[childKey] = childData;
+                        }
+                        else{
+                            childData.forEach(data=>{
+                                var newEvent = {
+                                    dateEnd : data.dateEnd,
+                                    dateStart : data.dateStart,
+                                    title : data.title,
+                                }
+                                this.schedule[childKey].push(newEvent)
+                                // console.log(data)
+                            })
+                        }
                     })
                 })
-                .then(()=>{this.display=true})
 
             }
 
         })
         .then(()=>{
             console.log('DONE')
+            console.log(this.schedule); 
         })
     },
     methods :{
         addEvent({commit}){
-            const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
-            // const groupKey = $route.params.groupKey
+
+            const groupId = this.$route.params.groupId
+            // const groupId = $route.params.groupId
             if (!this.dateStart || !this.dateEnd){
                 alert("Start Time and Date End must not leave empty")
             }
@@ -216,14 +199,22 @@ export default {
                     else if (this.selectedDay === 'Friday'){
                         index=4
                     }
+                    const email = auth.currentUser.email
                     const newEvent = {
                         dateStart: this.dateStart,
                         dateEnd: this.dateEnd,
                         title: this.title,
-                        registeredUser : [],
+                        registeredUser : [email],
                     }
-                    this.schedule[index].push(newEvent)
-                    db.ref('groups/'+groupKey).child('groupSchedule').set(this.schedule)
+                    if(this.schedule[index].indexOf("empty")>-1){
+                        
+                        this.schedule[index]=[newEvent]
+                    }
+                    else{   
+                        this.schedule[index].push(newEvent)
+                    }
+                    // console.log(this.schedule)
+                    db.ref('groups/'+groupId).child('groupSchedule').set(this.schedule)
 
                     this.dateStart = null
                     this.dateEnd = null
