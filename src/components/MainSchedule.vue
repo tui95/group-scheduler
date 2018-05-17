@@ -34,7 +34,6 @@
                 </v-expansion-panel>
             </v-layout>
         </v-flex>
-        {{schedule}}
     </v-container>
 </template>
 
