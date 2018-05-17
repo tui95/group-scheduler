@@ -13,6 +13,8 @@ import CreateGroup from '@/components/CreateGroup'
 import Sidebar from '@/components/Sidebar'
 import CreateSchedule from '@/components/CreateSchedule'
 import MainSchedulee from '@/components/MainSchedule'
+import Profile from '@/components/Profile'
+import ChangePassword from '@/components/ChangePassword'
 
 Vue.use(Router)
 
@@ -37,6 +39,12 @@ export default new Router({
             path : '/forgotpassword',
             name : 'ForgotPassword',
             component : ForgotPassword
+        },
+        {
+            path : '/changepassword',
+            name : 'ChangePassword',
+            component : ChangePassword,
+            beforeEnter : AuthGuard
         },
         {
             path: '/',
@@ -77,6 +85,9 @@ export default new Router({
             path: '/sidebar',
             name: 'Sidebar',
             component: Sidebar,
+            path: '/profile',
+            name: 'Profile',
+            component: Profile,
             beforeEnter: AuthGuard
         },
         {
