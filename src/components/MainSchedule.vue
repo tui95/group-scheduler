@@ -41,8 +41,8 @@
                 return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
             },
             headers() {
-                let headerText = ["Event Name", "Start Time", "End Time", "Action"]
-                let headerValue = ["title", "dateStart", "dateEnd", ""]
+                let headerText = ["Event Name", "Start Time", "End Time"]
+                let headerValue = ["title", "dateStart", "dateEnd"]
                 let headerAlign = "center"
                 let retHeaders = []
                 for (let i=0; i<headerText.length; i++) {
@@ -52,6 +52,12 @@
                         align: headerAlign
                     })
                 }
+                retHeaders.push({
+                    text: "Action",
+                    value: "",
+                    align: "center",
+                    sortable: false
+                })
                 return retHeaders
             }
         },
