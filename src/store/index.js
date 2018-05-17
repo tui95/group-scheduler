@@ -48,8 +48,9 @@ export const store = new Vuex.Store({
         signinWithGoogle({commit},payload){
             commit('setLoading',true)
             firebase.auth().signInWithPopup(googleProvider).then(result => {
+                commit('setUser', result.user)
                 commit('setLoading',false)
-                router.push('/home')
+                router.push('/')
                 // // This gives you a Google Access Token. You can use it to access the Google API.
                 // var token = result.credential.accessToken;
                 // // The signed-in user info.

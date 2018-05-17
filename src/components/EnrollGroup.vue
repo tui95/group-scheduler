@@ -30,7 +30,7 @@
                                 <v-divider></v-divider>
                                 <v-flex class="text-xs-right" mt-2>
                                     <v-btn color="primary" type="submit">Enroll</v-btn>
-                                    <v-btn color="secondary" @click="() => $router.push('/')" :disabled="loading">Back</v-btn>
+                                    <v-btn color="secondary" @click="() => $router.push('/')">Back</v-btn>
                                 </v-flex>
                             </v-layout>
                         </form>
