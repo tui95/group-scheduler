@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import firebase from 'firebase'
 import Home from '@/components/Home'
-import Landing from '@/components/Landing'
 import NotFound from '@/components/NotFound'
 import Signup from '@/components/Signup'
 import Signin from '@/components/Signin'
@@ -46,12 +45,6 @@ export default new Router({
             beforeEnter : AuthGuard
         },
         {
-            path: '/',
-            name: 'Landing',
-            component: Landing,
-            beforeEnter: AuthGuard
-        },
-        {
             path: '/signin',
             name: 'Signin',
             component: Signin
@@ -62,7 +55,7 @@ export default new Router({
             component: Signup
         },
         {
-            path: '/home',
+            path: '/',
             name: 'Home',
             component: Home,
             beforeEnter: AuthGuard

@@ -102,7 +102,7 @@ export const store = new Vuex.Store({
                     commit('setUser', newUser)
                     commit('setLoading', false)
                     commit('setError', null)
-                    router.push('/home')
+                    router.push('/')
                 })
                 .catch(error => {
                     commit('setError', error.message)
@@ -120,7 +120,7 @@ export const store = new Vuex.Store({
         userSignOut({commit}) {
             firebase.auth().signOut()
             commit('setUser', null)
-            router.push('/')
+            router.push('/signin')
         },
         userEnrollGroup({commit}, payload) {
             commit('setLoading', true)
