@@ -61,6 +61,7 @@
             //         }
             //     }
             // ).catch(error=> {console.log(error)})
+            this.$store.dispatch('loadGroupsInfo')
             this.userGroups = this.$store.state.userGroupsInfo
         },
         methods :{
