@@ -7,6 +7,7 @@ import NotFound from '@/components/NotFound'
 import Signup from '@/components/Signup'
 import Signin from '@/components/Signin'
 import CreateSchedule from '@/components/CreateSchedule'
+import MainSchedulee from '@/components/MainSchedule'
 
 Vue.use(Router)
 
@@ -54,7 +55,11 @@ export default new Router({
             component: CreateSchedule,
             beforeEnter: AuthGuard
         },
-
+        {
+            path: '/groups/:groupId/events',
+            name: 'MainSchedule',
+            component: MainSchedulee
+        }
     ],
     mode: 'history'
 })
