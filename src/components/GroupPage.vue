@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid fill-height>
+    <v-container fluid fill-height v-if="display">
         <v-layout align-center justify-center>
             <v-flex xs12 sm4 md8>
                 <v-card class="elevation-12">
@@ -9,6 +9,11 @@
                     <v-divider></v-divider>
                     <v-card-text class="text-xs-left">
                         <v-layout column>
+                            <v-flex my-3>
+                                <v-alert type="error" dismissible v-model="alert">
+                                    {{error}}
+                                </v-alert>
+                            </v-flex>
                             <h4>Description :</h4>
                             <v-flex my-3>
                                 <div>{{group_description}}</div>
@@ -47,12 +52,14 @@
                 group_members : [],
                 alert : false,
                 display : false,
+                dataStart : null,
+                dataEnd : null,
                 schedule : [[],[],[],[],[]],
                 day : ['Monday','Tuesday','Wednesday','Thursday','Friday']
             }
         },
         created() {
-            console.log('creating group page for ' + groupkey)
+            console.log('creating group page for')
             console.log(this.schedule)
             // const groupKey = 
             const groupKey = "-LCdBX6_LyyhbHn8m793" //for testing

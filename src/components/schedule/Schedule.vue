@@ -191,7 +191,7 @@ export default {
 		        let difMin = endMin - startMin;
 		        // console.log(startMin);
 		        // console.log(endMin);
-		        this.taskDetail[i][j].styleObj = {
+		        this.taskDetail[i][j]['styleObj'] = {
 		            height: difMin * 100 / 60 + 'px',
 		            top: ((startMin - (this.pageTimeGround[0].split(":")[0] * 60 + this.pageTimeGround[0].split(":")[1] * 1)) * 100 / 60) + 50 + 'px',
 		            backgroundColor: this.color[~~(Math.random() * this.color.length)]
