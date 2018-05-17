@@ -101,6 +101,15 @@ export const store = new Vuex.Store({
                     commit('setError', error.message)
                     commit('setLoading', false)
                 })
+        },
+        changePassword({commit}, payload) {
+            commit('setLoading', true)
+            firebase.auth().currentUser.updatePassword(payload.new_password).then(result =>{
+                commit('setLoading',false)
+            }).catch(error =>{
+                commit('setError', error.message)
+                commit('setLoading', false)
+            })
         }
     },
     getters: {
