@@ -87,6 +87,7 @@
             {{selectedDay}}
             {{dateStart}}
             {{dateEnd}}
+            {{this.schedule}}
 
         </form>
 
@@ -109,13 +110,7 @@ export default {
             dateStart: null,
             dateEnd : null,
             schedule:[[],[],[],[],[]],
-            
-
-
-
-
-            days : ['Monday','Tuesday','Wednesday','Thursday','Friday'],
-
+    
             selectedDay : '',
 
         }
@@ -125,7 +120,7 @@ export default {
         console.log(this.schedule)
         // All in one page
         const groupId = this.$route.params.groupId
-        let tempSchedule = [[],[],[],[],[]]
+
         db.ref('groups/'+ groupId).once('value',snapsot=>{
             //check if exist
             if(snapsot.hasChild('groupSchedule')){
@@ -133,7 +128,6 @@ export default {
                 db.ref('groups/'+groupId)
                 .child('groupSchedule')
                 .once('value', scheduleSnapshot=>{
-                    console.log('scheduleSnapshot',scheduleSnapshot)
                     scheduleSnapshot.forEach(childScheduleSnapshot=>{
                         let childKey = childScheduleSnapshot.key
                         let childData = childScheduleSnapshot.val()
@@ -163,42 +157,63 @@ export default {
         })
     },
     methods :{
+        isOverlap(){
+            var i=0;
+            var dayIndex = this.days.indexOf(this.selectedDay);
+            let dayEvents = this.schedule[dayIndex]
+            console.log(dayEvents)
+            if(dayEvents ==='empty')return false
+            else{
+                var existDateStart, existDateEnd
+                for(i;i<dayEvents.length;i++){
+                    existDateStart = dayEvents[i].dateStart
+                    existDateEnd  = dayEvents[i].dateEnd
+                    if((existDateStart <= this.dateStart && this.dateStart <=existDateEnd) ||
+                       (existDateStart <= this.dateEnd && this.dateEnd <=existDateEnd) ||
+                       (existDateStart <= this.dateStart && this.dateStart <=existDateEnd) ||
+                    ((this.dateStart <= existDateStart) && (this.dateEnd>= existDateEnd))
+                    ){
+                        return true
+                    }
+
+                }
+            }
+            return false
+        },
         addEvent({commit}){
 
             const groupId = this.$route.params.groupId
             // const groupId = $route.params.groupId
             if (!this.dateStart || !this.dateEnd){
                 alert("Start Time and Date End must not leave empty")
+            
             }
             else{
                 const dateStartInt = parseInt(this.dateStart.replace(/:/g,''));
                 const dateEndInt = parseInt(this.dateEnd.replace(/:/g,''));
                 console.log(dateStartInt, dateEndInt)
-                if (dateStartInt <800 ||
-                    dateEndInt < 800 ||
-                    dateStartInt >2000||
-                    dateEndInt >2000||
-                    dateStartInt>dateEndInt){
+                if (dateStartInt>dateEndInt){
                     console.log('End time must be after Start Time')
                     alert('End time must not come before Start Time')
                 }
+                if (dateStartInt <800 ||
+                    dateEndInt < 800 ||
+                    dateStartInt >2000||
+                    dateEndInt >2000)
+                    {
+                        console.log('The start and end time must be between 8:00 and 20:00')
+
+                        alert('The start and end time must be between 8:00 and 20:00')
+                
+                }
+                if(this.isOverlap()){
+                    console.log("The time period is overlapped with other events")
+                    alert("The time period is overlapped with other events")
+                    
+                }
                 else{
-                    var index =0
-                    if (this.selectedDay ==='Monday'){
-                        index=0
-                    }
-                    else if (this.selectedDay ==='Tuesday'){
-                        index=1
-                    }
-                    else if (this.selectedDay ==='Wednesday'){
-                        index=2
-                    }
-                    else if (this.selectedDay ==='Thursday'){
-                        index=3
-                    }
-                    else if (this.selectedDay === 'Friday'){
-                        index=4
-                    }
+                    var index = this.days.indexOf(this.selectedDay)
+
                     const email = auth.currentUser.email
                     const newEvent = {
                         dateStart: this.dateStart,
@@ -232,6 +247,9 @@ export default {
             },
             loading() {
                 return this.$store.state.loading
+            },
+            days(){
+                return ['Monday','Tuesday','Wednesday','Thursday','Friday']
             }
         },
         watch: {

@@ -17,9 +17,6 @@
                                 <td class="text-xs-center">{{ props.item.dateEnd }}</td>
                                 <td class="justify-center layout px-0">
                                     <div v-if="isGroupLeader">
-                                        <v-btn icon class="mx-0" @click="">
-                                            <v-icon color="teal">edit</v-icon>
-                                        </v-btn>
                                         <v-btn icon class="mx-0" @click.stop="dialog2 = true">
                                             <v-icon color="pink">delete</v-icon>
                                         </v-btn>
