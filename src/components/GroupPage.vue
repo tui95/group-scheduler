@@ -27,7 +27,7 @@
                                     </li>
                                 </ul>
                             </v-flex>
-                            <h4>Schedule : <v-btn><v-icon left>event_note</v-icon>view all events</v-btn></h4>
+                            <h4>Schedule : <v-btn @click="goTo()"><v-icon left>event_note</v-icon>view all events</v-btn></h4>
                             <v-flex>
                                 <Schedule
                                     :time-ground="['06:00', '22:00']"
@@ -62,7 +62,13 @@
                 day : ['Monday','Tuesday','Wednesday','Thursday','Friday']
             }
         },
+        methods: {
+            goTo() {
+                return this.$router.push(this.$route.path + '/events')
+            }
+        },
         created() {
+            console.log(this.$route.path)
             console.log('creating group page for' + this.$route.params.groupId)
             const groupKey = this.$route.params.groupId
             let tempSchedule = [[],[],[],[],[]]
