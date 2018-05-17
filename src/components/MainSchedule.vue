@@ -15,7 +15,19 @@
                                 <td class="text-xs-center">{{ props.item.title }}</td>
                                 <td class="text-xs-center">{{ props.item.dateStart}}</td>
                                 <td class="text-xs-center">{{ props.item.dateEnd }}</td>
-                                <td class="text-xs-center">hello</td>
+                                <td class="justify-center layout px-0">
+                                    <div v-if="isGroupLeader">
+                                        <v-btn icon class="mx-0" @click="">
+                                            <v-icon color="teal">edit</v-icon>
+                                        </v-btn>
+                                        <v-btn icon class="mx-0" @click="">
+                                            <v-icon color="pink">delete</v-icon>
+                                        </v-btn>
+                                    </div>
+                                    <v-btn v-else icon class="mx-0" @click="">
+                                        <v-icon color="blue">group_add</v-icon>
+                                    </v-btn>
+                                </td>
                             </template>
                         </v-data-table>
                     </v-expansion-panel-content>
@@ -27,12 +39,13 @@
 </template>
 
 <script>
-    import {db} from "@/firebase"
+    import { db, auth } from "@/firebase"
 
     export default {
         data() {
             return {
-                schedule: []
+                schedule: [],
+                isGroupLeader: false
             }
         },
         methods: {},
@@ -63,7 +76,6 @@
         },
         created() {
             let groupId = this.$route.params.groupId
-            // let testGroupId = "-LCdBX6_LyyhbHn8m793"
             let scheduleRef = db.ref("groups/" + groupId + "/groupSchedule")
             scheduleRef.on('value', snapshot => {
                 snapshot.forEach(daySnapshot => {
@@ -75,6 +87,12 @@
                     })
                     this.schedule.push({dayString: day, events: tmpEvents})
                 })
+            })
+            let groupLeaderRef = db.ref("groups/" + groupId + "/groupLeader")
+            groupLeaderRef.on("value", snapshot => {
+                if (snapshot.val() === auth.currentUser.email) {
+                    this.isGroupLeader = true
+                }
             })
         }
     }
