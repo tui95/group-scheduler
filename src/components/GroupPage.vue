@@ -1,10 +1,10 @@
 <template>
-    <v-container fluid fill-height v-if="display">
+    <v-container fluid fill-height>
         <v-layout align-center justify-center>
             <v-flex xs12 sm4 md8>
                 <v-card class="elevation-12">
                     <v-card-title>
-                        <div my-3><h3 class="headline text-xs-left"> {{groupname}} </h3></div>
+                        <div mb-3><h3 class="headline text-xs-left"> {{groupname}} </h3></div>
                     </v-card-title>
                     <v-divider></v-divider>
                     <v-card-text class="text-xs-left">
@@ -19,11 +19,16 @@
                                 <div>{{group_description}}</div>
                             </v-flex>
                             <h4>Members :</h4>
-                            <v-flex my-3>
-                                
+                            <v-flex ml-3 my-3>
+                                <!-- <div>{{group_members}}</div> -->
+                                <ul id="members">
+                                    <li v-for="member in group_members">
+                                        <div>{{member}}</div>
+                                    </li>
+                                </ul>
                             </v-flex>
                             <h4>Schedule : <v-btn><v-icon left>event_note</v-icon>view all events</v-btn></h4>
-                            <v-flex>
+                            <v-flex v-if="display">
                                 <Schedule 
                                     :time-ground="['06:00', '22:00']" 
                                     :week-ground="['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']" 
@@ -43,7 +48,6 @@
     import {auth, db} from '@/firebase'
 
     export default {
-        props : ['groupkey'],
         components : {Schedule},
         data() {
             return {
@@ -52,22 +56,25 @@
                 group_members : [],
                 alert : false,
                 display : false,
-                dataStart : null,
-                dataEnd : null,
+                title : '',
+                dateEnd : null,
+                dateStart : null,
                 schedule : [[],[],[],[],[]],
                 day : ['Monday','Tuesday','Wednesday','Thursday','Friday']
             }
         },
         created() {
-            console.log('creating group page for')
-            console.log(this.schedule)
-            // const groupKey = 
-            const groupKey = "-LCdBX6_LyyhbHn8m793" //for testing
+            console.log('creating group page for' + this.$route.params.groupId)
+            const groupKey = this.$route.params.groupId
             let tempSchedule = [[],[],[],[],[]]
             db.ref('groups/' + groupKey).once('value',snapshot => {
-                this.groupname = snapshot.groupName
-                this.group_description = snapshot.groupDescription
-                // this.group_members = {member : snapshot.}
+                console.log(snapshot.val())
+                this.groupname = snapshot.val().groupName
+                console.log(snapshot.val().groupName)
+                this.group_description = snapshot.val().groupDescription
+                console.log(snapshot.val().groupDescription)
+                this.group_members = snapshot.val().groupMembers
+                console.log(snapshot.val().groupMembers)
                 if(snapshot.hasChild('groupSchedule')){
                     db.ref('groups/' + groupKey).child('groupSchedule').once('value',scheduleSnapshot => {
                         console.log('scheduleSnapshot',scheduleSnapshot)
@@ -77,8 +84,8 @@
 
                             childData.forEach(data =>{
                                 var newEvent = {
-                                    dataEnd : data.dateEnd,
-                                    dataStart : data.dateStart,
+                                    dateEnd : data.dateEnd,
+                                    dateStart : data.dateStart,
                                     title : data.title,
                                 }
                                 this.schedule[childKey].push(newEvent)

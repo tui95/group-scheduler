@@ -25,8 +25,8 @@ const AuthGuard = (to, from, next) => {
 export default new Router({
     routes: [
         {
-            path : '/group',
-            name : 'GroupPage',
+            path : '/groups/:groupId',
+            name : 'GroupPages',
             component : GroupPage,
             beforeEnter : AuthGuard
         },

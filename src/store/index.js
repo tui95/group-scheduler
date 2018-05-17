@@ -11,7 +11,9 @@ export const store = new Vuex.Store({
         appTitle: 'Grouppie',
         user: null,
         error: null,
-        loading: false
+        loading: false,
+        userGroupKeys: null,
+        userGroupsInfo: []
     },
     mutations: {
         setUser(state, payload) {
@@ -22,6 +24,9 @@ export const store = new Vuex.Store({
         },
         setLoading(state, payload) {
             state.loading = payload
+        },
+        setUserGroupsInfo(state, payload) {
+            state.userGroupsInfo = payload.userGroupsInfo
         }
     },
     actions: {
@@ -171,6 +176,7 @@ export const store = new Vuex.Store({
 
                 const groupRef = firebase.database().ref('groups/'+groupKey);   
                 groupRef.child('groupName').set(payload.group_name); 
+                groupRef.child('groupDescription').set(payload.group_description)
                 groupRef.child('groupLeader').set(email)
                 groupRef.child('groupMembers').set([email])
                 
@@ -210,9 +216,35 @@ export const store = new Vuex.Store({
         }
 
     },
+    loadGroupsInfo({commit}) {
+        console.log('loadGroupsInfo')
+        let userGroupsRef = firebase.database().ref('users/' + firebase.auth().currentUser.uid).orderByKey()
+        let groupsInfo = []
+        userGroupsRef.on('value', snapshot => {
+            snapshot.forEach(childSnapshot => {
+                for (let i=0; i<childSnapshot.val().length; i++) {
+                    let gId = childSnapshot.val()[i]
+                    let groupsRef = firebase.database().ref('groups/' + gId);
+                    groupsRef.on('value', groupSnapshot => {
+                        groupsInfo.push({
+                            groupId: gId,
+                            ...groupSnapshot.val()
+                        })
+                    })
+                }
+            })
+        })
+        commit('setUserGroupsInfo', {userGroupsInfo : groupsInfo})
+    },
     getters: {
         isAuthenticated(state) {
             return state.user !== null && state.user !== undefined
+        },
+        getUserGroupKey: state => {
+            return state.userGroupKeys;
+        },
+        getUserGroupsInfo(state) {
+            return state.userGroupsInfo
         }
     }
 })

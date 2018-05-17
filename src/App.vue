@@ -1,5 +1,22 @@
 <template>
     <v-app>
+        <!-- <v-navigation-drawer v-model="sidebar" permanent v-if="isAuthenticated">
+            <v-toolbar flat>
+                <v-list>
+                    <v-list-title class="pl-3">
+                        <v-list-title-title class="title">
+                            Your Groups :
+                        </v-list-title-title>
+                    </v-list-title>
+                </v-list>
+            </v-toolbar>
+            <v-divider></v-divider>
+            <v-list dense class="pt-0">
+                <v-list-tile v-for="(item,index) in userGroups" :key="index" @click="goToGroup(item.groupId)">
+                    {{item.groupName}}
+                </v-list-tile>
+            </v-list>
+        </v-navigation-drawer> -->
         <!-- <v-navigation-drawer v-model="sidebar" app>
             <v-list>
                 <v-list-tile
@@ -40,7 +57,7 @@
                     <v-icon left color="white">{{ item.icon }}</v-icon>
                     <div><font color = "white">{{ item.title }}</font></div>
                 </v-btn>
-                <v-btn flat v-if="isAuthenticated">
+                <v-btn flat v-if="isAuthenticated" @click="()=> $router.push('/profile')">
                     <v-icon color="white" left>account_circle</v-icon>
                     <font color = "white">Profile</font>
                 </v-btn>
@@ -65,13 +82,24 @@
 </template>
 
 <script>
+import firebase from '@/firebase'
 export default {
   data() {
     return {
-      sidebar: false
+        userGroups : [],
+        sidebar: false
     };
   },
+//   mounted() {
+//       this.userGroups = this.$store.state.userGroupsInfo
+//   },
+  created(){
+      this.userGroups = this.$store.state.userGroupsInfo 
+  },
   computed: {
+    // userGroups() {
+    //     return this.$store.state.userGroupsInfo
+    // },
     appTitle() {
       return this.$store.state.appTitle;
     },
@@ -92,6 +120,9 @@ export default {
   methods: {
     userSignOut() {
       this.$store.dispatch("userSignOut");
+    },
+    goToGroup(id){
+        this.$router.push('/groups/' + id)
     }
   }
 };
