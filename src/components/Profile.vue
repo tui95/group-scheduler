@@ -4,7 +4,7 @@
             <v-flex xs12 sm8 offset-sm2>
                 <v-card class="elevation-12" height="200%">
                     <v-card-title class="text-xs-left">
-                        <h3 class="my-3 headline"><v-icon large class="mb-1">account_circle</v-icon><>Profile</h3>
+                        <h3 class="ml-2 my-3 headline"><v-icon large class="mb-1">account_circle</v-icon>Profile</h3>
                     </v-card-title>
                     <v-divider></v-divider>
                     <v-card-text>
