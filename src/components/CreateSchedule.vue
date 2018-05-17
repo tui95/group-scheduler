@@ -52,7 +52,7 @@
                         ></v-text-field>
                         <v-time-picker v-model="dateStart" @change="$refs.menuS.save(dateStart)"></v-time-picker>
                     </v-menu>
-                    
+
                 </v-flex>
                 <v-flex>
                     <v-menu
@@ -87,18 +87,9 @@
             {{selectedDay}}
             {{dateStart}}
             {{dateEnd}}
-            
+
         </form>
 
-        <!-- {{schedule}} -->
-        for the sake of testing
-        <Schedule 
-			:time-ground="['06:00', '22:00']" 
-			:week-ground="['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']" 
-			:task-detail="schedule">
-				
-		</Schedule>
-        
     </v-container>
 </template>
 
@@ -139,14 +130,14 @@ export default {
                 [],
                 []
 			],
-            
-        
-    
-            
+
+
+
+
             days : ['Monday','Tuesday','Wednesday','Thursday','Friday'],
-            
+
             selectedDay : '',
-            
+
         }
     },
     created(){
@@ -173,7 +164,7 @@ export default {
                             var newEvent = {
                                 dateEnd : data.dateEnd,
                                 dateStart : data.dateStart,
-                                title : data.title,                                
+                                title : data.title,
                             }
                             this.schedule[childKey].push(newEvent)
                             // console.log(data)
@@ -189,7 +180,7 @@ export default {
             console.log('DONE')
         })
     },
-    methods :{ 
+    methods :{
         addEvent({commit}){
             const groupKey ="-LCdBX6_LyyhbHn8m793" //tempory
             // const groupKey = $route.params.groupKey
@@ -200,8 +191,8 @@ export default {
                 const dateStartInt = parseInt(this.dateStart.replace(/:/g,''));
                 const dateEndInt = parseInt(this.dateEnd.replace(/:/g,''));
                 console.log(dateStartInt, dateEndInt)
-                if (dateStartInt <800 || 
-                    dateEndInt < 800 || 
+                if (dateStartInt <800 ||
+                    dateEndInt < 800 ||
                     dateStartInt >2000||
                     dateEndInt >2000||
                     dateStartInt>dateEndInt){
@@ -240,7 +231,7 @@ export default {
                     this.selectedDay =''
                 }
             }
-            
+
         }
     },
 
@@ -264,7 +255,7 @@ export default {
                 }
             }
         }
-    
+
 }
 </script>
 
